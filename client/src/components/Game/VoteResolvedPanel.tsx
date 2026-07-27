@@ -3,6 +3,7 @@ import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
+import { AvatarDisplay } from '../Common/AvatarKit.js';
 import { UserCheck, ShieldAlert, ArrowRight, Hourglass, RefreshCw, Eye } from 'lucide-react';
 
 export const VoteResolvedPanel: React.FC = () => {
@@ -45,8 +46,8 @@ export const VoteResolvedPanel: React.FC = () => {
             <span className="text-3xs font-extrabold text-rose-500 uppercase tracking-widest block mb-2">
               Highest Voted Candidate
             </span>
-            <div className="w-16 h-16 rounded-2xl bg-rose-600/10 border border-rose-500/35 flex items-center justify-center text-3xl mx-auto mb-3 animate-pulse shadow-lg shadow-rose-550/15">
-              {candidate.avatar || '🕵️'}
+            <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-3 animate-pulse shadow-lg shadow-rose-500/15 ring-2 ring-rose-500/30">
+              <AvatarDisplay avatarId={candidate.avatar || 'fox'} size={64} />
             </div>
             <h3 className="text-xl font-black text-slate-100">
               {candidate.nickname}
@@ -123,13 +124,17 @@ export const VoteResolvedPanel: React.FC = () => {
               return (
                 <div key={player.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-900/35 border border-slate-900/80">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">{player.avatar || '🕵️'}</span>
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      <AvatarDisplay avatarId={player.avatar || 'fox'} size={24} />
+                    </div>
                     <span className="text-xs font-bold text-slate-200">{player.nickname}</span>
                   </div>
                   <ArrowRight size={12} className="text-slate-600" />
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-slate-300">{target.nickname}</span>
-                    <span className="text-sm">{target.avatar || '🕵️'}</span>
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      <AvatarDisplay avatarId={target.avatar || 'fox'} size={24} />
+                    </div>
                   </div>
                 </div>
               );

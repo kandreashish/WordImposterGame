@@ -4,8 +4,7 @@ import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
 import { Copy, Share2, Crown, Trash2, CheckCircle2, WifiOff, QrCode, Edit2, X } from 'lucide-react';
 import { trackEvent } from '../../utils/analytics.js';
-
-const AVATARS = ['🦊', '🐼', '🤖', '👽', '👻', '🦄', '🦁', '🐸', '🍕', '🥑', '🎮', '👑', '🕵️', '🐱', '🐶'];
+import { AVATARS, AvatarDisplay } from '../Common/AvatarKit.js';
 
 export const LobbyPanel: React.FC = () => {
   const { room, playerId, changeNickname, changeAvatar, startGame, kickPlayer, leaveRoom } = useSocket();
@@ -70,7 +69,7 @@ export const LobbyPanel: React.FC = () => {
   const openEditModal = () => {
     if (self) {
       setNewNickname(self.nickname);
-      setSelectedAvatar(self.avatar || '🕵️');
+      setSelectedAvatar(self.avatar || 'fox');
       setNameError('');
       setIsEditModalOpen(true);
       trackEvent('click_open_edit_profile', { screen: 'Lobby' });
@@ -210,7 +209,7 @@ export const LobbyPanel: React.FC = () => {
                     }`}
                     title={isSelf ? 'Change Avatar / Nickname' : undefined}
                   >
-                    {player.avatar || '🕵️'}
+                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
                   </button>
                   
                   <div className="flex flex-col min-w-0">
@@ -354,24 +353,35 @@ export const LobbyPanel: React.FC = () => {
                 )}
               </div>
 
-              {/* Avatar Selection Grid */}
               <div className="flex flex-col gap-2">
                 <label className="text-3xs font-extrabold text-slate-400 uppercase tracking-widest">
-                  Choose Icon
+                  Choose Avatar
                 </label>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-3 gap-2 max-h-60 overflow-y-auto pr-1">
                   {AVATARS.map((av) => (
                     <button
-                      key={av}
+                      key={av.id}
                       type="button"
-                      onClick={() => setSelectedAvatar(av)}
-                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg border cursor-pointer hover:bg-slate-800/60 transition-all ${
-                        selectedAvatar === av
-                          ? 'bg-violet-600/35 border-violet-500 scale-110 shadow-lg shadow-violet-500/10 text-white'
-                          : 'bg-slate-900/50 border-slate-800 text-slate-400'
+                      onClick={() => setSelectedAvatar(av.id)}
+                      className={`relative flex flex-col items-center gap-1 p-2 rounded-2xl border cursor-pointer transition-all ${
+                        selectedAvatar === av.id
+                          ? 'bg-violet-600/20 border-violet-500 scale-105 shadow-lg shadow-violet-500/20'
+                          : 'bg-slate-900/50 border-slate-800 hover:border-slate-700 hover:bg-slate-800/50'
                       }`}
                     >
-                      {av}
+                      <div className="rounded-full overflow-hidden" style={{ width: 52, height: 52 }}>
+                        <AvatarDisplay avatarId={av.id} size={52} />
+                      </div>
+                      <span className={`text-4xs font-bold uppercase tracking-wider ${
+                        selectedAvatar === av.id ? 'text-violet-300' : 'text-slate-500'
+                      }`}>{av.label}</span>
+                      {selectedAvatar === av.id && (
+                        <div className="absolute top-1 right-1 w-4 h-4 rounded-full bg-violet-500 flex items-center justify-center">
+                          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                            <path d="M1.5 4L3.2 5.8L6.5 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>

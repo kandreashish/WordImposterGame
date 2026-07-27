@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
+import { AvatarDisplay } from '../Common/AvatarKit.js';
 import { Crown, LogOut, RefreshCw, Trophy, UserCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { trackEvent } from '../../utils/analytics.js';
@@ -169,8 +170,8 @@ export const ResultsPanel: React.FC = () => {
                   <div className="text-xs font-black text-slate-500 w-5 text-center">
                     #{idx + 1}
                   </div>
-                  <div className="w-7 h-7 rounded-lg bg-slate-805 border border-slate-800 flex items-center justify-center text-sm flex-shrink-0">
-                    {player.avatar || '🕵️'}
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="text-sm font-bold text-slate-200 truncate flex items-center gap-1.5">
@@ -215,7 +216,9 @@ export const ResultsPanel: React.FC = () => {
             return (
               <div key={player.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-905/30 border border-slate-800/80">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-lg leading-none">{player.avatar || '🕵️'}</span>
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
+                  </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-slate-200">{player.nickname}</span>
                     <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider leading-none mt-0.5 animate-pulse">
@@ -230,13 +233,9 @@ export const ResultsPanel: React.FC = () => {
                       <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider mr-1">Voted by:</span>
                       <div className="flex -space-x-1">
                         {voters.map((voter) => (
-                          <div 
-                            key={voter.id}
-                            title={`${voter.nickname} voted for ${player.nickname}`}
-                            className="w-6.5 h-6.5 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs shadow-md select-none hover:translate-y-[-2px] transition-transform cursor-help"
-                          >
-                            {voter.avatar || '🕵️'}
-                          </div>
+                            <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-700 shadow-md hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
+                              <AvatarDisplay avatarId={voter.avatar || 'fox'} size={24} />
+                            </div>
                         ))}
                       </div>
                     </>

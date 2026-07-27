@@ -2,6 +2,7 @@ import React from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
+import { AvatarDisplay } from '../Common/AvatarKit.js';
 import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass } from 'lucide-react';
 
 export const VotingPanel: React.FC = () => {
@@ -105,14 +106,8 @@ export const VotingPanel: React.FC = () => {
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
-                    isVotedTarget 
-                      ? 'bg-rose-500/25 text-rose-500' 
-                      : isSelf 
-                      ? 'bg-slate-900 text-slate-500' 
-                      : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    {player.avatar || '🕵️'}
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold truncate">
@@ -153,7 +148,9 @@ export const VotingPanel: React.FC = () => {
                     : 'bg-slate-900 border-slate-800 text-slate-500'
                 }`}
               >
-                <span className="text-sm leading-none">{p.avatar || '🕵️'}</span>
+                <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                  <AvatarDisplay avatarId={p.avatar || 'fox'} size={24} />
+                </div>
                 <span>{p.nickname}</span>
                 {p.hasVoted ? (
                   <X size={11} className="text-rose-400 flex-shrink-0 stroke-[3]" />
