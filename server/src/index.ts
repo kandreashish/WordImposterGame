@@ -183,6 +183,30 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Play one more round of clues (Host only)
+  socket.on('play-more-round', () => {
+    const { playerId, roomCode } = socket.data;
+    if (playerId && roomCode) {
+      try {
+        store.playOneMoreRound(roomCode, playerId);
+      } catch (error: any) {
+        socket.emit('game-error', error.message || 'Failed to request another round');
+      }
+    }
+  });
+
+  // Reveal voted player and end round (Host only)
+  socket.on('reveal-voted-player', () => {
+    const { playerId, roomCode } = socket.data;
+    if (playerId && roomCode) {
+      try {
+        store.revealVotedPlayer(roomCode, playerId);
+      } catch (error: any) {
+        socket.emit('game-error', error.message || 'Failed to reveal identity');
+      }
+    }
+  });
+
   // 7. Kick Player (Host Only)
   socket.on('kick-player', ({ targetPlayerId }: { targetPlayerId: string }) => {
     const { playerId, roomCode } = socket.data;

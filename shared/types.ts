@@ -1,6 +1,6 @@
 export type GameMode = 'classic' | 'undercover';
 
-export type GameStatus = 'LOBBY' | 'REVEAL' | 'DISCUSSION' | 'VOTING' | 'RESULTS';
+export type GameStatus = 'LOBBY' | 'REVEAL' | 'DISCUSSION' | 'VOTING' | 'VOTE_RESOLVED' | 'RESULTS';
 
 export interface Player {
   id: string;
@@ -60,4 +60,5 @@ export interface Room {
   currentTurnIndex: number;
   turnTimer: number;
   imposterHint: string | null;
+  votedPlayerId: string | null;
 }

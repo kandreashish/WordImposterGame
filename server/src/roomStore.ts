@@ -108,7 +108,8 @@ export class RoomStore {
       turnOrder: [],
       currentTurnIndex: 0,
       turnTimer: 0,
-      imposterHint: null
+      imposterHint: null,
+      votedPlayerId: null
     };
     this.rooms.set(code, room);
     this.disconnectTimers.set(code, new Map());
@@ -395,6 +396,7 @@ export class RoomStore {
     room.currentTurnIndex = 0;
     room.activePlayerId = null;
     room.turnTimer = 0;
+    room.votedPlayerId = null;
     this.touchRoom(code);
 
     // Transition to Reveal phase
@@ -452,6 +454,8 @@ export class RoomStore {
       // Active player's turn timed out, advance to the next player
       this.advanceTurn(code);
     } else if (room.status === 'VOTING') {
+      this.goToVoteResolved(code);
+    } else if (room.status === 'VOTE_RESOLVED') {
       this.resolveVoting(code);
     }
   }
@@ -525,10 +529,86 @@ export class RoomStore {
     if (allVoted) {
       const interval = this.gameIntervals.get(code);
       if (interval) clearInterval(interval);
-      this.resolveVoting(code);
+      this.goToVoteResolved(code);
     } else {
       this.onStateUpdate(code, room);
     }
+  }
+
+  // Go to Vote Resolved phase (pending host decision)
+  private goToVoteResolved(code: string) {
+    const room = this.rooms.get(code);
+    if (!room) return;
+
+    // Count votes
+    const votesMap = new Map<string, number>();
+    room.players.forEach(p => {
+      if (p.voteTargetId) {
+        votesMap.set(p.voteTargetId, (votesMap.get(p.voteTargetId) || 0) + 1);
+      }
+    });
+
+    // Find player with maximum votes
+    let maxVotes = -1;
+    let candidatesToEliminate: Player[] = [];
+
+    room.players.forEach(p => {
+      const votes = votesMap.get(p.id) || 0;
+      if (votes > maxVotes) {
+        maxVotes = votes;
+        candidatesToEliminate = [p];
+      } else if (votes === maxVotes && votes > 0) {
+        candidatesToEliminate.push(p);
+      }
+    });
+
+    let candidateId: string | null = null;
+    if (candidatesToEliminate.length === 1 && maxVotes > 0) {
+      candidateId = candidatesToEliminate[0].id;
+    }
+
+    room.votedPlayerId = candidateId;
+    this.startPhase(code, 'VOTE_RESOLVED', 25); // 25s for the host to decide
+  }
+
+  // Play one more round of description clues
+  public playOneMoreRound(code: string, hostPlayerId: string) {
+    const room = this.rooms.get(code);
+    if (!room) return;
+
+    const host = room.players.find(p => p.id === hostPlayerId);
+    if (!host || !host.isHost) throw new Error('Only the host can decide to play one more round');
+
+    if (room.status !== 'VOTE_RESOLVED') return;
+
+    // Reset votes for all players
+    room.players.forEach(p => {
+      p.voteTargetId = null;
+    });
+    room.votedPlayerId = null;
+
+    // Initialize description turn order again
+    const activePlayers = room.players.filter(p => p.isConnected && p.isAlive);
+    room.turnOrder = activePlayers.map(p => p.id).sort(() => Math.random() - 0.5);
+    room.currentTurnIndex = 0;
+    room.activePlayerId = room.turnOrder[0] || null;
+    room.chat = [];
+
+    this.startPhase(code, 'DISCUSSION', 30);
+  }
+
+  // Reveal Voted Player (commit elimination and end round)
+  public revealVotedPlayer(code: string, hostPlayerId: string) {
+    const room = this.rooms.get(code);
+    if (!room) return;
+
+    const host = room.players.find(p => p.id === hostPlayerId);
+    if (!host || !host.isHost) throw new Error('Only the host can reveal the identity');
+
+    if (room.status !== 'VOTE_RESOLVED') return;
+
+    // Resolve standard voting logic to end game round
+    this.resolveVoting(code);
   }
 
   // Resolve Voting Phase

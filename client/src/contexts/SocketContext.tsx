@@ -22,6 +22,8 @@ interface SocketContextType {
   changeAvatar: (avatar: string) => void;
   submitClue: (text: string) => void;
   doneSpeaking: () => void;
+  playMoreRound: () => void;
+  revealVotedPlayer: () => void;
   theme: 'light' | 'dark';
   toggleTheme: () => void;
 }
@@ -196,6 +198,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socket?.emit('done-speaking');
   };
 
+  const playMoreRound = () => {
+    socket?.emit('play-more-round');
+  };
+
+  const revealVotedPlayer = () => {
+    socket?.emit('reveal-voted-player');
+  };
+
   return (
     <SocketContext.Provider
       value={{
@@ -218,6 +228,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         changeAvatar,
         submitClue,
         doneSpeaking,
+        playMoreRound,
+        revealVotedPlayer,
         theme,
         toggleTheme
       }}

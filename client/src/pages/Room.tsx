@@ -5,6 +5,7 @@ import { LobbyPanel } from '../components/Game/LobbyPanel.js';
 import { RevealPanel } from '../components/Game/RevealPanel.js';
 import { DiscussionPanel } from '../components/Game/DiscussionPanel.js';
 import { VotingPanel } from '../components/Game/VotingPanel.js';
+import { VoteResolvedPanel } from '../components/Game/VoteResolvedPanel.js';
 import { ResultsPanel } from '../components/Game/ResultsPanel.js';
 import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
@@ -157,6 +158,7 @@ export const Room: React.FC = () => {
         {room.status === 'REVEAL' && <RevealPanel />}
         {room.status === 'DISCUSSION' && <DiscussionPanel />}
         {room.status === 'VOTING' && <VotingPanel />}
+        {room.status === 'VOTE_RESOLVED' && <VoteResolvedPanel />}
         {room.status === 'RESULTS' && <ResultsPanel />}
       </main>
 
