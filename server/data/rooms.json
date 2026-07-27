@@ -1,0 +1,84 @@
+[
+  {
+    "code": "693614",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 60,
+      "votingTime": 30,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Animals",
+        "Food",
+        "Nature",
+        "Objects",
+        "Sports",
+        "Movies & TV",
+        "Music",
+        "Science",
+        "Places",
+        "Professions"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_892llpxcu",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": false,
+        "isImposter": false,
+        "word": "Chaiwala",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 100,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "robot"
+      },
+      {
+        "id": "p_l4dmy8jtf",
+        "nickname": "War",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": true,
+        "word": null,
+        "role": "IMPOSTER",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "frog"
+      },
+      {
+        "id": "p_ztt79haqc",
+        "nickname": "Legend",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": false,
+        "word": "Chaiwala",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "panda"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "Chaiwala",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 2,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": "Street vendor",
+    "votedPlayerId": null
+  }
+]

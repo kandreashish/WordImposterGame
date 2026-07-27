@@ -146,23 +146,33 @@ export const DiscussionPanel: React.FC = () => {
           <MessageSquareText size={12} className="text-slate-500" />
           Submitted Clues Log
         </h3>
-        <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1">
           {room.chat && room.chat.length > 0 ? (
             room.chat.map((msg, idx) => {
               const msgPlayer = room.players.find(p => p.id === msg.playerId);
+              // Calculate clue round index for this message
+              const playerCluesUpToIdx = room.chat.slice(0, idx + 1).filter(m => m.playerId === msg.playerId);
+              const roundNum = msg.roundNumber || playerCluesUpToIdx.length;
+              const roundLabel = roundNum === 1 ? '1st Round Word' : roundNum === 2 ? '2nd Round Word' : roundNum === 3 ? '3rd Round Word' : `${roundNum}th Round Word`;
+
               return (
                 <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
                   <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mt-0.5 border border-violet-500/30">
                     <AvatarDisplay avatarId={msgPlayer?.avatar || 'fox'} size={28} />
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    <div className="flex justify-between items-baseline">
-                      <span className="text-3xs font-black text-violet-400 uppercase tracking-wider truncate">{msg.nickname}</span>
-                      <span className="text-5xs text-slate-600 font-bold ml-2">
+                    <div className="flex justify-between items-baseline flex-wrap gap-1">
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <span className="text-3xs font-black text-violet-400 uppercase tracking-wider truncate">{msg.nickname}</span>
+                        <span className="text-[9px] bg-violet-500/15 text-violet-300 border border-violet-500/30 px-1.5 py-0.5 rounded font-extrabold tracking-wider">
+                          {roundLabel}
+                        </span>
+                      </div>
+                      <span className="text-5xs text-slate-600 font-bold">
                         {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                       </span>
                     </div>
-                    <span className="text-xs font-medium text-slate-200 mt-0.5">"{msg.text}"</span>
+                    <span className="text-xs font-semibold text-slate-100 mt-1">"{msg.text}"</span>
                   </div>
                 </div>
               );
@@ -177,15 +187,16 @@ export const DiscussionPanel: React.FC = () => {
       </Card>
 
       {/* Grid of Players in Room */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {room.players.map((player) => {
           const isSelf = player.id === playerId;
           const isSpeaking = player.id === room.activePlayerId;
-          
+          const playerClues = (room.chat || []).filter(c => c.playerId === player.id);
+
           return (
             <div
               key={player.id}
-              className={`flex items-center gap-2.5 p-3 rounded-2xl border transition-all ${
+              className={`flex flex-col gap-2 p-3 rounded-2xl border transition-all ${
                 !player.isConnected
                   ? 'bg-red-950/10 border-red-500/20 opacity-60'
                   : isSpeaking
@@ -195,27 +206,51 @@ export const DiscussionPanel: React.FC = () => {
                   : 'bg-slate-900/40 border-slate-800/80'
               }`}
             >
-              <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-700/60">
-                <AvatarDisplay avatarId={player.avatar || 'fox'} size={36} />
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-700/60">
+                  <AvatarDisplay avatarId={player.avatar || 'fox'} size={36} />
+                </div>
+                <div className="min-w-0 flex flex-col flex-1">
+                  <span className="text-xs font-bold text-slate-200 truncate flex items-center gap-1">
+                    {player.nickname}
+                    {isSelf && (
+                      <span className="text-5xs bg-violet-500/20 text-violet-400 px-1 py-0.5 rounded uppercase font-bold tracking-wider">
+                        You
+                      </span>
+                    )}
+                  </span>
+                  <span className="text-4xs font-semibold uppercase tracking-wider mt-0.5">
+                    {!player.isConnected ? (
+                      <span className="text-red-400">Offline</span>
+                    ) : isSpeaking ? (
+                      <span className="text-violet-400 animate-pulse">Speaking...</span>
+                    ) : (
+                      <span className="text-slate-500 flex items-center gap-0.5"><CheckCircle2 size={8} /> Ready</span>
+                    )}
+                  </span>
+                </div>
               </div>
-              <div className="min-w-0 flex flex-col">
-                <span className="text-xs font-bold text-slate-200 truncate flex items-center gap-1">
-                  {player.nickname}
-                  {isSelf && (
-                    <span className="text-5xs bg-violet-500/20 text-violet-400 px-1 py-0.5 rounded uppercase font-bold tracking-wider">
-                      You
-                    </span>
-                  )}
-                </span>
-                <span className="text-4xs font-semibold uppercase tracking-wider mt-0.5">
-                  {!player.isConnected ? (
-                    <span className="text-red-400">Offline</span>
-                  ) : isSpeaking ? (
-                    <span className="text-violet-400 animate-pulse">Speaking</span>
-                  ) : (
-                    <span className="text-slate-500 flex items-center gap-0.5"><CheckCircle2 size={8} /> Ready</span>
-                  )}
-                </span>
+
+              {/* Player's submitted clues by round (1st Round Word, 2nd Round Word...) */}
+              <div className="flex flex-col gap-1 pt-1.5 border-t border-slate-800/60">
+                {playerClues.length > 0 ? (
+                  playerClues.map((c, cIdx) => {
+                    const rNum = c.roundNumber || (cIdx + 1);
+                    const rTag = rNum === 1 ? '1st Round' : rNum === 2 ? '2nd Round' : rNum === 3 ? '3rd Round' : `${rNum}th Round`;
+                    return (
+                      <div key={cIdx} className="flex items-center justify-between text-xs px-2 py-1 rounded-lg bg-slate-950/60 border border-slate-800/80">
+                        <span className="text-4xs font-extrabold text-violet-400 uppercase tracking-wider">
+                          {rTag} Word:
+                        </span>
+                        <span className="font-bold text-slate-100 italic">"{c.text}"</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span className="text-5xs text-slate-500 italic font-medium px-1">
+                    No word prompt submitted yet
+                  </span>
+                )}
               </div>
             </div>
           );

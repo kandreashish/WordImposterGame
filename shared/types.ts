@@ -42,6 +42,7 @@ export interface ChatMessage {
   nickname: string;
   text: string;
   timestamp: number;
+  roundNumber?: number;
 }
 
 export interface Room {

@@ -546,11 +546,15 @@ export class RoomStore {
     const player = room.players.find(p => p.id === playerId);
     if (!player) return;
 
+    // Count how many clues this player has submitted so far in this game session to label round number (Round 1, Round 2, etc)
+    const playerClueCount = room.chat.filter(m => m.playerId === playerId).length + 1;
+
     room.chat.push({
       playerId,
       nickname: player.nickname,
       text: text.trim(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      roundNumber: playerClueCount
     });
 
     this.advanceTurn(code);
