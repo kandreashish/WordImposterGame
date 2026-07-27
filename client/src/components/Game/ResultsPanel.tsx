@@ -202,8 +202,8 @@ export const ResultsPanel: React.FC = () => {
 
       {/* Voting Trail Breakdown */}
       <Card>
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-          <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+          <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
             <UserCheck size={14} className="text-rose-500" />
             Who Voted For Whom
           </h3>
@@ -214,13 +214,13 @@ export const ResultsPanel: React.FC = () => {
             const voters = room.players.filter(p => p.voteTargetId === player.id);
             
             return (
-              <div key={player.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-905/30 border border-slate-800/80">
+              <div key={player.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-905/30 border border-slate-200 dark:border-slate-800/80">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
                     <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-200">{player.nickname}</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-slate-200">{player.nickname}</span>
                     <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider leading-none mt-0.5 animate-pulse">
                       {player.role}
                     </span>
@@ -233,7 +233,7 @@ export const ResultsPanel: React.FC = () => {
                       <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider mr-1">Voted by:</span>
                       <div className="flex -space-x-1">
                         {voters.map((voter) => (
-                            <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-700 shadow-md hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
+                            <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 shadow-md hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
                               <AvatarDisplay avatarId={voter.avatar || 'fox'} size={24} />
                             </div>
                         ))}
