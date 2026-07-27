@@ -53,11 +53,53 @@ export class RoomStore {
   private inactivityTimers = new Map<string, NodeJS.Timeout>();
   private gameIntervals = new Map<string, NodeJS.Timeout>();
   private disconnectTimers = new Map<string, Map<string, NodeJS.Timeout>>(); // roomCode -> (playerId -> Timeout)
+  private dataFilePath: string;
 
   constructor(
     private onStateUpdate: (code: string, room: Room) => void,
     private onRoomClosed: (code: string) => void
-  ) {}
+  ) {
+    const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
+    if (!fs.existsSync(dataDir)) {
+      try { fs.mkdirSync(dataDir, { recursive: true }); } catch (e) {}
+    }
+    this.dataFilePath = path.join(dataDir, 'rooms.json');
+    this.loadFromDisk();
+  }
+
+  // Save room store state to disk
+  private saveToDisk() {
+    try {
+      const serializableRooms: Room[] = Array.from(this.rooms.values()).map(r => ({
+        ...r,
+        // Mark players as disconnected on disk reboot so they reconnect cleanly
+        players: r.players.map(p => ({ ...p, isConnected: false, socketId: null }))
+      }));
+      fs.writeFileSync(this.dataFilePath, JSON.stringify(serializableRooms, null, 2));
+    } catch (err) {
+      console.error('Failed to save rooms to disk:', err);
+    }
+  }
+
+  // Load room store state from disk on server start
+  private loadFromDisk() {
+    try {
+      if (fs.existsSync(this.dataFilePath)) {
+        const raw = fs.readFileSync(this.dataFilePath, 'utf8');
+        const loaded: Room[] = JSON.parse(raw);
+        for (const room of loaded) {
+          // Reset runtime variables
+          room.players.forEach(p => { p.isConnected = false; p.socketId = null; });
+          this.rooms.set(room.code, room);
+          this.disconnectTimers.set(room.code, new Map());
+          this.touchRoom(room.code);
+        }
+        console.log(`Restored ${loaded.length} room(s) from persistent disk storage.`);
+      }
+    } catch (err) {
+      console.error('Failed to load rooms from disk:', err);
+    }
+  }
 
   // Generate 6-digit code
   private generateRoomCode(): string {
@@ -72,7 +114,7 @@ export class RoomStore {
     return code;
   }
 
-  // Reset inactivity timer (30 minutes)
+  // Reset inactivity timer (30 minutes) and persist state
   private touchRoom(code: string) {
     const existing = this.inactivityTimers.get(code);
     if (existing) clearTimeout(existing);
@@ -83,6 +125,7 @@ export class RoomStore {
     }, 30 * 60 * 1000);
 
     this.inactivityTimers.set(code, timer);
+    this.saveToDisk();
   }
 
   // Get room
@@ -800,6 +843,7 @@ export class RoomStore {
     }
 
     this.rooms.delete(code);
+    this.saveToDisk();
     this.onRoomClosed(code);
     console.log(`Room ${code} closed.`);
   }

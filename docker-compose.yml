@@ -11,4 +11,9 @@ services:
     environment:
       - PORT=6969
       - NODE_ENV=production
+    volumes:
+      - rooms-data:/app/data
     restart: unless-stopped
+
+volumes:
+  rooms-data:
