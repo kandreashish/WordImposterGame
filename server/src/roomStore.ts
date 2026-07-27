@@ -136,8 +136,16 @@ export class RoomStore {
 
     const isHost = room.players.length === 0;
 
-    const AVATARS = ['🦊', '🐼', '🤖', '👽', '👻', '🦄', '🦁', '🐸', '🍕', '🥑', '🎮', '👑', '🕵️'];
-    const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
+    const ALL_AVATAR_IDS = [
+      'fox', 'alien', 'robot', 'ghost', 'panda', 'unicorn',
+      'lion', 'frog', 'shark', 'dino', 'wizard', 'ninja',
+      'penguin', 'vampire', 'clown'
+    ];
+    const takenAvatars = new Set(room.players.map(p => p.avatar));
+    const available = ALL_AVATAR_IDS.filter(id => !takenAvatars.has(id));
+    // If all are taken (shouldn't happen with 15 avatars & max ~12 players), fall back to full list
+    const pool = available.length > 0 ? available : ALL_AVATAR_IDS;
+    const randomAvatar = pool[Math.floor(Math.random() * pool.length)];
 
     const newPlayer: Player = {
       id: playerId,
@@ -316,11 +324,15 @@ export class RoomStore {
     if (!room) return;
 
     const player = room.players.find(p => p.id === playerId);
-    if (player) {
-      player.avatar = avatar;
-      this.touchRoom(code);
-      this.onStateUpdate(code, room);
-    }
+    if (!player) return;
+
+    // Reject if another player already has this avatar
+    const alreadyTaken = room.players.some(p => p.id !== playerId && p.avatar === avatar);
+    if (alreadyTaken) return;
+
+    player.avatar = avatar;
+    this.touchRoom(code);
+    this.onStateUpdate(code, room);
   }
 
   // Start game

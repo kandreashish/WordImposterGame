@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 import { Room, RoomSettings } from '../../../shared/types.js';
 import { trackEvent, identifyUser } from '../utils/analytics.js';
+
+interface ServerError {
+  type: 'error' | 'disconnected';
+  title?: string;
+  message: string;
+}
 
 interface SocketContextType {
   socket: Socket | null;
@@ -11,6 +18,8 @@ interface SocketContextType {
   nickname: string;
   error: string | null;
   setError: (err: string | null) => void;
+  serverError: ServerError | null;
+  clearServerError: () => void;
   createRoom: (nickname: string, settings: RoomSettings) => void;
   joinRoom: (nickname: string, roomCode: string) => void;
   toggleReady: (isReady: boolean) => void;
@@ -43,11 +52,14 @@ const getOrCreatePlayerId = (): string => {
 };
 
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [room, setRoom] = useState<Room | null>(null);
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<ServerError | null>(null);
+  const clearServerError = () => setServerError(null);
   
   // Theme Management
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -136,13 +148,22 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       console.log('Reconnection failed - clearing cached room state');
       localStorage.removeItem('wi_room_code');
       setRoom(null);
+      setServerError({
+        type: 'disconnected',
+        title: 'Reconnection Failed',
+        message: 'We couldn\'t reconnect you to the room. It may have been closed or expired.',
+      });
       trackEvent('reconnect_failed', { screen: 'Room' });
     });
 
     socketIo.on('room-closed', (reason?: string) => {
-      setError(reason || 'The room has been closed');
       localStorage.removeItem('wi_room_code');
       setRoom(null);
+      setServerError({
+        type: 'disconnected',
+        title: 'Room Closed',
+        message: reason || 'The room has been closed by the host.',
+      });
       trackEvent('room_closed_by_server', { screen: 'Room', reason });
     });
 
@@ -208,6 +229,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socket.emit('leave-room');
     localStorage.removeItem('wi_room_code');
     setRoom(null);
+    navigate('/');
   };
 
   const changeNickname = (newNickname: string) => {
@@ -253,6 +275,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         nickname,
         error,
         setError,
+        serverError,
+        clearServerError,
         createRoom,
         joinRoom,
         toggleReady,

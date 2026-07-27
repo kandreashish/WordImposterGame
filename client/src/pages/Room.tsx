@@ -12,6 +12,7 @@ import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
 import { Modal } from '../components/Common/Modal.js';
 import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon } from 'lucide-react';
+import { ErrorDialog } from '../components/Common/ErrorDialog.js';
 
 export const Room: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -22,6 +23,8 @@ export const Room: React.FC = () => {
     joinRoom,
     error,
     setError,
+    serverError,
+    clearServerError,
     theme,
     toggleTheme
   } = useSocket();
@@ -120,7 +123,7 @@ export const Room: React.FC = () => {
 
   // Render Room view when connected
   return (
-    <div className="min-h-screen game-bg-radial flex flex-col p-4 relative overflow-x-hidden">
+    <div className="min-h-screen game-bg-radial flex flex-col p-4 relative overflow-x-hidden overflow-y-auto">
       {/* Sticky Room Header */}
       <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-4 mb-4 border-b border-slate-800/80 relative z-10">
         <Link to="/" className="flex items-center gap-1.5 cursor-pointer">
@@ -153,7 +156,7 @@ export const Room: React.FC = () => {
       </header>
 
       {/* Main Game Screen */}
-      <main className="flex-1 w-full max-w-4xl mx-auto flex flex-col justify-start py-6 relative z-10">
+      <main className="flex-1 w-full max-w-4xl mx-auto flex flex-col justify-start py-2 pb-8 relative z-10">
         {room.status === 'LOBBY' && <LobbyPanel />}
         {room.status === 'REVEAL' && <RevealPanel />}
         {room.status === 'DISCUSSION' && <DiscussionPanel />}
@@ -178,6 +181,14 @@ export const Room: React.FC = () => {
           </Button>
         </div>
       </Modal>
+      {/* Server Error Dialog — shown for disconnects / room closed */}
+      <ErrorDialog
+        isOpen={serverError !== null}
+        type={serverError?.type}
+        title={serverError?.title}
+        message={serverError?.message ?? ''}
+        onGoHome={() => { clearServerError(); navigate('/'); }}
+      />
     </div>
   );
 };

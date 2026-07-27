@@ -57,9 +57,11 @@ export const CreateRoom: React.FC = () => {
   const [category, setCategory] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('wi_settings_categories');
-      return saved ? JSON.parse(saved) : [];
+      const parsed: string[] = saved ? JSON.parse(saved) : [];
+      // Default to all categories if nothing was saved or list is empty
+      return parsed.length > 0 ? parsed : ALL_CATEGORIES.map(c => c.label);
     } catch {
-      return [];
+      return ALL_CATEGORIES.map(c => c.label);
     }
   });
   const [showCategoryDialog, setShowCategoryDialog] = useState(false);
@@ -99,6 +101,8 @@ export const CreateRoom: React.FC = () => {
   };
   const handleCategory = (val: string) => {
     setCategory(prev => {
+      // Must keep at least one category selected
+      if (prev.includes(val) && prev.length === 1) return prev;
       const next = prev.includes(val) ? prev.filter(c => c !== val) : [...prev, val];
       localStorage.setItem('wi_settings_categories', JSON.stringify(next));
       trackEvent('change_category_setting', { screen: 'CreateRoom', categories: next });
@@ -125,7 +129,7 @@ export const CreateRoom: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden">
+    <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden overflow-y-auto">
       {/* Theme Toggle Button */}
       <div className="absolute top-4 right-4 z-20">
         <button
@@ -177,12 +181,12 @@ export const CreateRoom: React.FC = () => {
                   onClick={() => handleGameMode('classic')}
                   className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     gameMode === 'classic'
-                      ? 'bg-violet-600/20 border-violet-500 text-white shadow-inner shadow-violet-500/10'
-                      : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-700/80 hover:text-slate-300'
+                      ? 'bg-violet-600/20 border-violet-500 shadow-inner shadow-violet-500/10'
+                      : 'bg-slate-900/40 border-slate-800 hover:border-slate-700/80'
                   }`}
                 >
-                  <span className="text-sm font-bold">Classic Spy</span>
-                  <span className="text-3xs text-slate-400 leading-tight mt-1">
+                  <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Classic Spy</span>
+                  <span className="text-[11px] leading-tight mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                     Imposter gets no word and must bluff.
                   </span>
                 </button>
@@ -191,12 +195,12 @@ export const CreateRoom: React.FC = () => {
                   onClick={() => handleGameMode('undercover')}
                   className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
                     gameMode === 'undercover'
-                      ? 'bg-violet-600/20 border-violet-500 text-white shadow-inner shadow-violet-500/10'
-                      : 'bg-slate-900/40 border-slate-800 text-slate-400 hover:border-slate-700/80 hover:text-slate-300'
+                      ? 'bg-violet-600/20 border-violet-500 shadow-inner shadow-violet-500/10'
+                      : 'bg-slate-900/40 border-slate-800 hover:border-slate-700/80'
                   }`}
                 >
-                  <span className="text-sm font-bold">Undercover</span>
-                  <span className="text-3xs text-slate-400 leading-tight mt-1">
+                  <span className="text-sm font-bold" style={{ color: 'var(--color-text-primary)' }}>Undercover</span>
+                  <span className="text-[11px] leading-tight mt-1" style={{ color: 'var(--color-text-secondary)' }}>
                     Imposter gets a similar word.
                   </span>
                 </button>
@@ -281,7 +285,7 @@ export const CreateRoom: React.FC = () => {
                   Categories
                 </span>
                 <span className="text-xs text-slate-500">
-                  {category.length === 0 ? 'All active' : `${category.length} selected`}
+                  {category.length === ALL_CATEGORIES.length ? 'All selected' : `${category.length} of ${ALL_CATEGORIES.length}`}
                 </span>
               </div>
 
@@ -292,27 +296,29 @@ export const CreateRoom: React.FC = () => {
                 className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/70 transition-all cursor-pointer group"
               >
                 <div className="flex flex-wrap gap-1.5 flex-1 mr-2">
-                  {category.length === 0 ? (
-                    <span className="text-sm text-slate-500">Tap to choose categories…</span>
-                  ) : (
-                    category.map(c => {
-                      const meta = ALL_CATEGORIES.find(a => a.label === c);
-                      return (
-                        <span
-                          key={c}
-                          className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-                          style={{
-                            background: `${meta?.accentColor ?? '#7c3aed'}22`,
-                            color: meta?.accentColor ?? '#a78bfa',
-                            border: `1px solid ${meta?.accentColor ?? '#7c3aed'}55`,
-                          }}
-                        >
-                          <span>{meta?.emoji}</span>
-                          <span>{c}</span>
-                        </span>
-                      );
-                    })
-                  )}
+                  {category.map(c => {
+                    const meta = ALL_CATEGORIES.find(a => a.label === c);
+                    const chipColor = theme === 'light'
+                      ? (meta?.darkAccent ?? '#4338ca')
+                      : (meta?.accentColor ?? '#a78bfa');
+                    const accentHex = meta?.accentColor ?? '#7c3aed';
+                    return (
+                      <span
+                        key={c}
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                        style={{
+                          background: theme === 'light'
+                            ? `${accentHex}18`
+                            : `${accentHex}22`,
+                          color: chipColor,
+                          border: `1px solid ${accentHex}${theme === 'light' ? '55' : '55'}`,
+                        }}
+                      >
+                        <span>{meta?.emoji}</span>
+                        <span>{c}</span>
+                      </span>
+                    );
+                  })}
                 </div>
                 <ChevronRight size={16} className="text-slate-500 group-hover:text-slate-300 shrink-0 transition-colors" />
               </button>

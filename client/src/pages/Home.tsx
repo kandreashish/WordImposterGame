@@ -22,7 +22,7 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden">
+    <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden overflow-y-auto">
       {/* Decorative blurred background lights */}
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-violet-600/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-82 h-82 bg-indigo-600/10 rounded-full blur-3xl" />

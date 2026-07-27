@@ -7,15 +7,15 @@ import { Room } from './pages/Room.js';
 
 export default function App() {
   return (
-    <SocketProvider>
-      <Router basename="/wordgame">
+    <Router basename="/wordgame">
+      <SocketProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create" element={<CreateRoom />} />
           <Route path="/join" element={<JoinRoom />} />
           <Route path="/room/:roomId" element={<Room />} />
         </Routes>
-      </Router>
-    </SocketProvider>
+      </SocketProvider>
+    </Router>
   );
 }
