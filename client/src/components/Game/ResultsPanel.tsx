@@ -106,16 +106,16 @@ export const ResultsPanel: React.FC = () => {
       {/* Identity Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Majority Word card */}
-        <Card className="p-5 border-slate-800 bg-slate-900/40">
+        <Card className="p-5 border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40">
           <span className="text-4xs font-extrabold text-slate-500 uppercase tracking-widest">
             Majority Word
           </span>
-          <h3 className="text-2xl font-black text-emerald-400 tracking-tight mt-1 mb-2 capitalize">
+          <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight mt-1 mb-2 capitalize">
             {majorityWord}
           </h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {majorityNicknames.map((nick, idx) => (
-              <span key={idx} className="text-5xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-bold">
+              <span key={idx} className="text-5xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 px-2 py-0.5 rounded font-bold border border-slate-200 dark:border-slate-700">
                 {nick}
               </span>
             ))}
@@ -123,16 +123,16 @@ export const ResultsPanel: React.FC = () => {
         </Card>
 
         {/* Imposter Word card */}
-        <Card className="p-5 border-slate-800 bg-slate-900/40">
+        <Card className="p-5 border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40">
           <span className="text-4xs font-extrabold text-slate-500 uppercase tracking-widest">
             Imposter Word ({room.settings.gameMode === 'classic' ? 'Classic' : 'Undercover'})
           </span>
-          <h3 className="text-2xl font-black text-rose-500 tracking-tight mt-1 mb-2 capitalize">
+          <h3 className="text-2xl font-black text-rose-600 dark:text-rose-500 tracking-tight mt-1 mb-2 capitalize">
             {room.settings.gameMode === 'classic' ? 'No Word' : imposterWord}
           </h3>
           <div className="flex flex-wrap gap-1.5 mt-2">
             {imposterNicknames.map((nick, idx) => (
-              <span key={idx} className="text-5xs bg-rose-500/10 text-rose-400 border border-rose-500/20 px-2 py-0.5 rounded font-bold">
+              <span key={idx} className="text-5xs bg-rose-500/15 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-500/30 dark:border-rose-500/20 px-2 py-0.5 rounded font-bold">
                 {nick}
               </span>
             ))}
@@ -142,9 +142,9 @@ export const ResultsPanel: React.FC = () => {
 
       {/* Leaderboard/Scoreboard Card */}
       <Card>
-        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
-          <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-            <Trophy size={14} className="text-amber-400" />
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+          <h3 className="text-xs font-bold text-slate-600 dark:text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+            <Trophy size={14} className="text-amber-500 dark:text-amber-400" />
             Active Scoreboard
           </h3>
           <span className="text-4xs text-slate-500 font-bold uppercase tracking-wider">
@@ -162,23 +162,23 @@ export const ResultsPanel: React.FC = () => {
                 key={player.id}
                 className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                   isSelf
-                    ? 'bg-violet-600/10 border-violet-500/50 shadow-lg shadow-violet-500/5'
-                    : 'bg-slate-900/40 border-slate-800/80'
+                    ? 'bg-violet-50/90 dark:bg-violet-600/10 border-2 border-violet-500 shadow-xs'
+                    : 'bg-slate-50/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/80'
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="text-xs font-black text-slate-500 w-5 text-center">
                     #{idx + 1}
                   </div>
-                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
                     <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold text-slate-200 truncate flex items-center gap-1.5">
+                    <span className="text-sm font-bold theme-text-primary truncate flex items-center gap-1.5">
                       {player.nickname}
-                      {isLeader && <Crown size={12} className="text-amber-400 flex-shrink-0" />}
+                      {isLeader && <Crown size={12} className="text-amber-500 dark:text-amber-400 flex-shrink-0" />}
                       {isSelf && (
-                        <span className="text-5xs bg-violet-500/20 text-violet-400 px-1 py-0.5 rounded uppercase font-bold tracking-wider">
+                        <span className="text-5xs bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 px-1.5 py-0.5 rounded uppercase font-extrabold tracking-wider">
                           You
                         </span>
                       )}
@@ -190,7 +190,7 @@ export const ResultsPanel: React.FC = () => {
                 </div>
 
                 <div className="text-right flex items-center gap-3">
-                  <span className="text-xs font-black text-violet-400 font-mono">
+                  <span className="text-xs font-black text-violet-600 dark:text-violet-400 font-mono">
                     {player.score} pts
                   </span>
                 </div>
@@ -212,16 +212,21 @@ export const ResultsPanel: React.FC = () => {
         <div className="flex flex-col gap-2.5">
           {room.players.map((player) => {
             const voters = room.players.filter(p => p.voteTargetId === player.id);
+            const isImposter = player.role === 'IMPOSTER';
             
             return (
-              <div key={player.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-905/30 border border-slate-200 dark:border-slate-800/80">
+              <div key={player.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-xs">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
-                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
+                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-slate-900 dark:text-slate-200">{player.nickname}</span>
-                    <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider leading-none mt-0.5 animate-pulse">
+                    <span className="text-xs sm:text-sm font-bold theme-text-primary">{player.nickname}</span>
+                    <span className={`text-5xs font-black uppercase tracking-wider leading-none mt-0.5 px-1.5 py-0.5 rounded w-fit ${
+                      isImposter 
+                        ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30' 
+                        : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                    }`}>
                       {player.role}
                     </span>
                   </div>
@@ -230,17 +235,17 @@ export const ResultsPanel: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   {voters.length > 0 ? (
                     <>
-                      <span className="text-5xs text-slate-500 font-extrabold uppercase tracking-wider mr-1">Voted by:</span>
+                      <span className="text-4xs font-bold theme-text-secondary uppercase tracking-wider mr-1">Voted by:</span>
                       <div className="flex -space-x-1">
                         {voters.map((voter) => (
-                            <div className="w-6 h-6 rounded-full overflow-hidden border border-slate-300 dark:border-slate-700 shadow-md hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
+                            <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-xs hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
                               <AvatarDisplay avatarId={voter.avatar || 'fox'} size={24} />
                             </div>
                         ))}
                       </div>
                     </>
                   ) : (
-                    <span className="text-4xs text-slate-500 font-medium uppercase italic">No votes</span>
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 italic">No votes</span>
                   )}
                 </div>
               </div>
