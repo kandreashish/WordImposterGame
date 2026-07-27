@@ -302,7 +302,7 @@ export const LobbyPanel: React.FC = () => {
             disabled={!canStartGame}
             className="sm:w-2/3 gap-2"
           >
-            <Zap size={16} />
+            <Zap size={18} className={canStartGame ? "animate-zap" : "text-slate-400"} />
             {connectedPlayersCount < 3 ? 'Need 3+ Players' : 'Start Game'}
           </Button>
         ) : (
