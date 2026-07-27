@@ -183,9 +183,6 @@ export const ResultsPanel: React.FC = () => {
                         </span>
                       )}
                     </span>
-                    <span className="text-5xs text-slate-500 font-semibold uppercase tracking-wider">
-                      Role: {player.role}
-                    </span>
                   </div>
                 </div>
 
