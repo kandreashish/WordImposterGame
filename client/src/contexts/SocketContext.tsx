@@ -69,16 +69,21 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return saved === 'light' ? 'light' : 'dark';
   });
 
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    if (nextTheme === 'light') {
+  useEffect(() => {
+    if (theme === 'light') {
       document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
       localStorage.setItem('wi_theme', 'light');
     } else {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light');
       localStorage.setItem('wi_theme', 'dark');
     }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
     trackEvent('click_toggle_theme', { screen: room?.status || 'Home', theme: nextTheme });
   };
 
