@@ -8,7 +8,7 @@ import { Room } from './pages/Room.js';
 export default function App() {
   return (
     <SocketProvider>
-      <Router>
+      <Router basename="/wordgame">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/create" element={<CreateRoom />} />
