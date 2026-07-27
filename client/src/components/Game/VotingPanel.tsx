@@ -3,7 +3,7 @@ import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
 import { AvatarDisplay } from '../Common/AvatarKit.js';
-import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass } from 'lucide-react';
+import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass, MessageSquare } from 'lucide-react';
 
 export const VotingPanel: React.FC = () => {
   const { room, playerId, submitVote } = useSocket();
@@ -94,13 +94,16 @@ export const VotingPanel: React.FC = () => {
             const votesForThisPlayer = room.players.filter(p => p.voteTargetId === player.id);
             const hasVotesReceived = votesForThisPlayer.length > 0;
 
+            // Get all clues typed by this player
+            const playerClues = (room.chat || []).filter(c => c.playerId === player.id);
+
             return (
               <button
                 key={player.id}
                 type="button"
                 onClick={() => !disabled && handleVoteSubmit(player.id)}
                 disabled={disabled}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border text-left transition-all ${
+                className={`w-full flex flex-col gap-2 p-3.5 sm:p-4 rounded-xl border text-left transition-all ${
                   isMyVotedTarget
                     ? 'bg-violet-50/90 dark:bg-violet-950/40 border-2 border-violet-500 shadow-md shadow-violet-500/10'
                     : hasVotesReceived
@@ -110,40 +113,69 @@ export const VotingPanel: React.FC = () => {
                     : 'bg-white/90 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-violet-400 dark:hover:border-violet-500/40 hover:bg-white dark:hover:bg-slate-900 cursor-pointer shadow-xs'
                 }`}
               >
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 relative border border-slate-200 dark:border-slate-700">
-                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 relative border border-slate-200 dark:border-slate-700">
+                      <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
+                    </div>
+                    <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                      <span className="text-sm font-bold theme-text-primary truncate">
+                        {player.nickname}
+                      </span>
+                      {isSelf && (
+                        <span className="text-4xs font-extrabold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-950/80 px-2 py-0.5 rounded-full uppercase flex-shrink-0">
+                          You
+                        </span>
+                      )}
+                      {!player.isConnected && (
+                        <span className="text-4xs font-extrabold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950/80 px-2 py-0.5 rounded-full uppercase flex-shrink-0">
+                          Offline
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 min-w-0 flex-wrap">
-                    <span className="text-sm font-bold theme-text-primary truncate">
-                      {player.nickname}
-                    </span>
-                    {isSelf && (
-                      <span className="text-4xs font-extrabold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-950/80 px-2 py-0.5 rounded-full uppercase flex-shrink-0">
-                        You
+
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+                    {/* Show Cross indicator if votes received from anyone */}
+                    {hasVotesReceived && (
+                      <span className="inline-flex items-center gap-1 text-xs font-black bg-rose-600 text-white dark:bg-rose-500/25 dark:text-rose-300 border border-rose-600 dark:border-rose-500/40 px-2.5 py-1 rounded-lg whitespace-nowrap shadow-xs">
+                        <X size={12} className="stroke-[3]" />
+                        {votesForThisPlayer.length}
                       </span>
                     )}
-                    {!player.isConnected && (
-                      <span className="text-4xs font-extrabold text-rose-700 dark:text-rose-400 bg-rose-100 dark:bg-rose-950/80 px-2 py-0.5 rounded-full uppercase flex-shrink-0">
-                        Offline
+
+                    {isMyVotedTarget && (
+                      <span className="inline-flex items-center gap-1 text-3xs font-extrabold bg-violet-600 text-white dark:bg-violet-600/40 dark:text-violet-200 border border-violet-600 dark:border-violet-500/40 px-2.5 py-1 rounded-lg uppercase tracking-wider whitespace-nowrap shadow-xs">
+                        <CheckCircle2 size={12} className="stroke-[2.5]" />
+                        My Choice
                       </span>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                  {/* Show Cross indicator if votes received from anyone */}
-                  {hasVotesReceived && (
-                    <span className="inline-flex items-center gap-1 text-xs font-black bg-rose-600 text-white dark:bg-rose-500/25 dark:text-rose-300 border border-rose-600 dark:border-rose-500/40 px-2.5 py-1 rounded-lg whitespace-nowrap shadow-xs">
-                      <X size={12} className="stroke-[3]" />
-                      {votesForThisPlayer.length}
-                    </span>
-                  )}
-
-                  {isMyVotedTarget && (
-                    <span className="inline-flex items-center gap-1 text-3xs font-extrabold bg-violet-600 text-white dark:bg-violet-600/40 dark:text-violet-200 border border-violet-600 dark:border-violet-500/40 px-2.5 py-1 rounded-lg uppercase tracking-wider whitespace-nowrap shadow-xs">
-                      <CheckCircle2 size={12} className="stroke-[2.5]" />
-                      My Choice
+                {/* Typed Clues by this player */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-slate-200/80 dark:border-slate-800/80 w-full">
+                  <span className="text-4xs font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1 flex-shrink-0">
+                    <MessageSquare size={11} className="text-violet-600 dark:text-violet-400" />
+                    Clues:
+                  </span>
+                  {playerClues.length > 0 ? (
+                    playerClues.map((c, cIdx) => {
+                      const rNum = c.roundNumber || (cIdx + 1);
+                      const rLabel = rNum === 1 ? 'R1' : rNum === 2 ? 'R2' : `R${rNum}`;
+                      return (
+                        <span
+                          key={cIdx}
+                          className="inline-flex items-center gap-1 text-xs font-bold bg-violet-500/10 text-violet-800 dark:text-violet-200 border border-violet-500/25 px-2 py-0.5 rounded-md italic"
+                        >
+                          <span className="text-5xs font-extrabold text-violet-700 dark:text-violet-400 not-italic uppercase">{rLabel}:</span>
+                          "{c.text}"
+                        </span>
+                      );
+                    })
+                  ) : (
+                    <span className="text-4xs text-slate-400 dark:text-slate-500 italic font-medium">
+                      No typed clues
                     </span>
                   )}
                 </div>
