@@ -78,16 +78,21 @@ export const VotingPanel: React.FC = () => {
         </Card>
       )}
 
-      {/* Grid of voting options (All Alive Players except Self) */}
+      {/* Grid of voting options (All Alive Players) */}
       <div className="flex flex-col gap-3">
-        <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider">
-          Voting Candidates
+        <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+          <span>Voting Candidates</span>
+          <span className="text-4xs text-slate-500 font-normal">Cross = Received suspicion votes</span>
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {alivePlayers.map((player) => {
             const isSelf = player.id === playerId;
-            const isVotedTarget = self.voteTargetId === player.id;
-            const disabled = hasVoted || isSelf || !isAlive;
+            const isMyVotedTarget = self.voteTargetId === player.id;
+            const disabled = hasVoted || !isAlive;
+
+            // Count live votes cast against this player by anyone
+            const votesForThisPlayer = room.players.filter(p => p.voteTargetId === player.id);
+            const hasVotesReceived = votesForThisPlayer.length > 0;
 
             return (
               <button
@@ -96,17 +101,17 @@ export const VotingPanel: React.FC = () => {
                 onClick={() => !disabled && handleVoteSubmit(player.id)}
                 disabled={disabled}
                 className={`w-full flex items-center justify-between p-4 rounded-2xl border text-left transition-all ${
-                  isVotedTarget
+                  isMyVotedTarget
                     ? 'bg-rose-600/25 border-rose-500 text-white shadow-lg shadow-rose-500/10'
-                    : isSelf
-                    ? 'bg-slate-900/20 border-slate-950 text-slate-500 cursor-not-allowed opacity-50'
+                    : hasVotesReceived
+                    ? 'bg-rose-950/20 border-rose-500/50 text-slate-200 shadow-md'
                     : disabled
                     ? 'bg-slate-900/10 border-slate-900 text-slate-500 cursor-not-allowed opacity-60'
                     : 'bg-slate-900/60 border-slate-800 text-slate-200 hover:border-slate-700 hover:bg-slate-900 cursor-pointer'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 relative">
                     <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
                   </div>
                   <div className="flex flex-col">
@@ -115,16 +120,26 @@ export const VotingPanel: React.FC = () => {
                       {isSelf && ' (You)'}
                     </span>
                     {!player.isConnected && (
-                      <span className="text-5xs text-rose-400/80 font-bold uppercase tracking-wider">Offline (Can still vote off)</span>
+                      <span className="text-5xs text-rose-400/80 font-bold uppercase tracking-wider">Offline</span>
                     )}
                   </div>
                 </div>
 
-                {isVotedTarget && (
-                  <span className="text-3xs bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider">
-                    My Vote
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {/* Show Cross indicator if votes received from anyone */}
+                  {hasVotesReceived && (
+                    <div className="flex items-center gap-1 bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-1 rounded-xl animate-pulse">
+                      <X size={14} className="stroke-[3]" />
+                      <span className="text-2xs font-extrabold">{votesForThisPlayer.length}</span>
+                    </div>
+                  )}
+
+                  {isMyVotedTarget && (
+                    <span className="text-3xs bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider">
+                      My Choice
+                    </span>
+                  )}
+                </div>
               </button>
             );
           })}

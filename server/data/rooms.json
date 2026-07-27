@@ -311,12 +311,12 @@
         "nickname": "Ashish",
         "isHost": true,
         "isReady": false,
-        "isImposter": true,
-        "word": null,
-        "role": "IMPOSTER",
+        "isImposter": false,
+        "word": "Sloth Bear",
+        "role": "MAJORITY",
         "isAlive": true,
-        "score": 0,
-        "voteTargetId": "p_muxgqz4vs",
+        "score": 100,
+        "voteTargetId": "p_rkiydzstr",
         "isConnected": false,
         "socketId": null,
         "avatar": "dino"
@@ -326,9 +326,9 @@
         "nickname": "AshishTwo",
         "isHost": false,
         "isReady": false,
-        "isImposter": false,
-        "word": "King Cobra",
-        "role": "MAJORITY",
+        "isImposter": true,
+        "word": null,
+        "role": "IMPOSTER",
         "isAlive": true,
         "score": 0,
         "voteTargetId": "p_0smp6puak",
@@ -342,54 +342,54 @@
         "isHost": false,
         "isReady": false,
         "isImposter": false,
-        "word": "King Cobra",
+        "word": "Sloth Bear",
         "role": "MAJORITY",
         "isAlive": true,
         "score": 0,
-        "voteTargetId": "p_rkiydzstr",
+        "voteTargetId": "p_0smp6puak",
         "isConnected": false,
         "socketId": null,
         "avatar": "unicorn"
       }
     ],
     "status": "VOTING",
-    "majorityWord": "King Cobra",
+    "majorityWord": "Sloth Bear",
     "imposterWord": null,
-    "timer": 44,
+    "timer": 38,
     "roundResults": null,
-    "roundCount": 1,
+    "roundCount": 2,
     "chat": [
-      {
-        "playerId": "p_rkiydzstr",
-        "nickname": "AshishTwo",
-        "text": "HIghg",
-        "timestamp": 1785160347782,
-        "roundNumber": 1
-      },
       {
         "playerId": "p_muxgqz4vs",
         "nickname": "Ashish Three",
-        "text": "trew",
-        "timestamp": 1785160366106,
+        "text": "Bear",
+        "timestamp": 1785160665640,
         "roundNumber": 1
       },
       {
         "playerId": "p_0smp6puak",
         "nickname": "Ashish",
-        "text": "gjhgjk",
-        "timestamp": 1785160377914,
+        "text": "Bera",
+        "timestamp": 1785160672807,
+        "roundNumber": 1
+      },
+      {
+        "playerId": "p_rkiydzstr",
+        "nickname": "AshishTwo",
+        "text": "Red",
+        "timestamp": 1785160682007,
         "roundNumber": 1
       }
     ],
-    "activePlayerId": "p_0smp6puak",
+    "activePlayerId": "p_rkiydzstr",
     "turnOrder": [
-      "p_rkiydzstr",
       "p_muxgqz4vs",
-      "p_0smp6puak"
+      "p_0smp6puak",
+      "p_rkiydzstr"
     ],
     "currentTurnIndex": 3,
     "turnTimer": 0,
-    "imposterHint": "Venomous snake",
+    "imposterHint": "Forest bear",
     "votedPlayerId": null
   }
 ]

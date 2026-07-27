@@ -577,8 +577,7 @@ export class RoomStore {
     if (!room) return;
 
     const voter = room.players.find(p => p.id === voterId);
-    if (!voter || !voter.isAlive || !voter.isConnected) return;
-    if (voterId === targetId) throw new Error('You cannot vote for yourself');
+    if (!voter || !voter.isAlive) return;
 
     voter.voteTargetId = targetId;
     this.touchRoom(code);
