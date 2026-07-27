@@ -264,8 +264,8 @@ export const ResultsPanel: React.FC = () => {
             Play Again
           </Button>
         ) : (
-          <Card className="sm:w-2/3 p-0 justify-center items-center bg-slate-900/20 border-slate-800 border flex select-none py-2 text-3xs font-semibold text-slate-400 tracking-wider uppercase">
-            Waiting for Host to restart...
+          <Card className="sm:w-2/3 p-0 justify-center items-center bg-slate-100/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 border flex select-none py-3 text-2xs font-extrabold theme-text-secondary tracking-wider uppercase">
+            Ask the host to restart
           </Card>
         )}
       </div>
