@@ -25,7 +25,12 @@ export const identifyUser = (distinctId: string, traits?: Record<string, any>) =
   try {
     mixpanel.identify(distinctId);
     if (traits) {
-      mixpanel.people.set(traits);
+      const userNickname = traits.name || traits.nickname || traits.$name;
+      const formattedTraits: Record<string, any> = {
+        ...traits,
+        ...(userNickname ? { $name: userNickname, name: userNickname, nickname: userNickname } : {})
+      };
+      mixpanel.people.set(formattedTraits);
     }
   } catch (error) {
     console.error('Mixpanel identify error:', error);
