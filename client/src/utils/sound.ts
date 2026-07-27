@@ -40,7 +40,7 @@ export const vibrateMobile = (pattern: number | number[]) => {
 };
 
 // Sound Effect Player using Web Audio API (Zero external assets required)
-export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' | 'vote') => {
+export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' | 'vote' | 'playerJoin' | 'playerLeave') => {
   if (!isSoundEnabled()) return;
 
   const ctx = getAudioContext();
@@ -108,6 +108,48 @@ export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' |
 
         osc.start(now + idx * 0.15);
         osc.stop(now + idx * 0.15 + 0.65);
+      });
+      break;
+    }
+
+    case 'playerJoin': {
+      // Upbeat bright two-tone pop/chime (G5 -> C6)
+      const notes = [783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+        gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.22);
+      });
+      break;
+    }
+
+    case 'playerLeave': {
+      // Soft descending two-tone chime (E5 -> C5)
+      const notes = [659.25, 523.25];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+
+        gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.22);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.09);
+        osc.stop(now + idx * 0.09 + 0.24);
       });
       break;
     }

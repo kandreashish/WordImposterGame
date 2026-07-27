@@ -141,6 +141,20 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             playSound('yourTurn');
             vibrateMobile([200, 150, 200]); // Attention alert vibration pattern
           }
+
+          // 4. Player Join / Leave Triggers
+          const prevPlayerCount = prevRoom.players.length;
+          const nextPlayerCount = updatedRoom.players.length;
+          const prevConnectedCount = prevRoom.players.filter(p => p.isConnected).length;
+          const nextConnectedCount = updatedRoom.players.filter(p => p.isConnected).length;
+
+          if (nextPlayerCount > prevPlayerCount || nextConnectedCount > prevConnectedCount) {
+            playSound('playerJoin');
+            vibrateMobile([80, 40, 100]); // Light double-tap for join
+          } else if (nextPlayerCount < prevPlayerCount || nextConnectedCount < prevConnectedCount) {
+            playSound('playerLeave');
+            vibrateMobile([120, 60, 80]); // Soft double-bump for leave
+          }
         }
 
         // Track state transitions (contextual screens)
