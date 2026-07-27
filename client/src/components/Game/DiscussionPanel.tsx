@@ -3,7 +3,8 @@ import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
 import { Button } from '../Common/Button.js';
-import { Eye, EyeOff, MessageSquareText, Sparkles, User, Send, Volume2, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { AvatarDisplay } from '../Common/AvatarKit.js';
+import { Eye, EyeOff, MessageSquareText, Sparkles, Send, Volume2, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { trackEvent } from '../../utils/analytics.js';
 
 export const DiscussionPanel: React.FC = () => {
@@ -56,10 +57,20 @@ export const DiscussionPanel: React.FC = () => {
       {isActiveSelf ? (
         <Card className="border-violet-500/50 bg-violet-600/5 py-5 px-4 flex flex-col items-center text-center relative overflow-hidden glow-card">
           <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/10 rounded-full blur-2xl animate-pulse" />
-          <span className="text-3xs font-extrabold text-violet-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5 animate-pulse">
-            <Volume2 size={12} />
-            Your Turn to Speak / Describe
-          </span>
+          
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-400 shadow-md shadow-violet-500/20">
+              <AvatarDisplay avatarId={self.avatar || 'fox'} size={40} />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-3xs font-extrabold text-violet-400 uppercase tracking-widest flex items-center gap-1">
+                <Volume2 size={12} className="animate-pulse" />
+                YOUR TURN
+              </span>
+              <span className="text-xs font-bold text-white">{self.nickname}</span>
+            </div>
+          </div>
+
           <h3 className="text-base font-bold text-slate-100 mb-4">
             Provide a clue for your word!
           </h3>
@@ -89,14 +100,23 @@ export const DiscussionPanel: React.FC = () => {
         </Card>
       ) : (
         <Card className="border-slate-800 bg-slate-900/40 py-5 px-4 flex flex-col items-center text-center">
-          <span className="text-3xs font-extrabold text-slate-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
-            <Volume2 size={12} className="animate-bounce text-violet-400" />
-            {activePlayer?.nickname}'s Turn
-          </span>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-violet-500/60 shadow-lg shadow-violet-500/20 animate-pulse">
+              <AvatarDisplay avatarId={activePlayer?.avatar || 'fox'} size={44} />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-3xs font-extrabold text-violet-400 uppercase tracking-widest flex items-center gap-1">
+                <Volume2 size={12} className="animate-bounce" />
+                CURRENT TURN
+              </span>
+              <span className="text-sm font-extrabold text-white">{activePlayer?.nickname}</span>
+            </div>
+          </div>
+
           <h3 className="text-base font-bold text-slate-300">
             Listening to {activePlayer?.nickname}...
           </h3>
-          <p className="text-slate-400 text-xs mt-1.5 max-w-sm leading-relaxed font-medium">
+          <p className="text-slate-400 text-xs mt-1 max-w-sm leading-relaxed font-medium">
             They can type their clue in the chat log below or present verbally. Wait for them to finish!
           </p>
         </Card>
@@ -128,17 +148,25 @@ export const DiscussionPanel: React.FC = () => {
         </h3>
         <div className="flex flex-col gap-2 max-h-[160px] overflow-y-auto pr-1">
           {room.chat && room.chat.length > 0 ? (
-            room.chat.map((msg, idx) => (
-              <div key={idx} className="flex flex-col gap-0.5 p-2 rounded-xl bg-slate-900/35 border border-slate-900">
-                <div className="flex justify-between items-baseline">
-                  <span className="text-3xs font-black text-violet-400 uppercase tracking-wider">{msg.nickname}</span>
-                  <span className="text-5xs text-slate-600 font-bold">
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                  </span>
+            room.chat.map((msg, idx) => {
+              const msgPlayer = room.players.find(p => p.id === msg.playerId);
+              return (
+                <div key={idx} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/80">
+                  <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 mt-0.5 border border-violet-500/30">
+                    <AvatarDisplay avatarId={msgPlayer?.avatar || 'fox'} size={28} />
+                  </div>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-3xs font-black text-violet-400 uppercase tracking-wider truncate">{msg.nickname}</span>
+                      <span className="text-5xs text-slate-600 font-bold ml-2">
+                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </span>
+                    </div>
+                    <span className="text-xs font-medium text-slate-200 mt-0.5">"{msg.text}"</span>
+                  </div>
                 </div>
-                <span className="text-xs font-medium text-slate-200 mt-0.5">"{msg.text}"</span>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="text-center py-6 text-slate-500 text-2xs font-semibold uppercase tracking-wider">
               No clues submitted yet
@@ -167,10 +195,8 @@ export const DiscussionPanel: React.FC = () => {
                   : 'bg-slate-900/40 border-slate-800/80'
               }`}
             >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                isSpeaking ? 'bg-violet-500 text-white' : isSelf ? 'bg-violet-500/30 text-violet-300' : 'bg-slate-800 text-slate-400'
-              }`}>
-                <User size={16} />
+              <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-700/60">
+                <AvatarDisplay avatarId={player.avatar || 'fox'} size={36} />
               </div>
               <div className="min-w-0 flex flex-col">
                 <span className="text-xs font-bold text-slate-200 truncate flex items-center gap-1">
