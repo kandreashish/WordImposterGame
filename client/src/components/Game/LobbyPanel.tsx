@@ -361,10 +361,10 @@ export const LobbyPanel: React.FC = () => {
                       key={av}
                       type="button"
                       onClick={() => setSelectedAvatar(av)}
-                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg border cursor-pointer hover:bg-slate-850 transition-all ${
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-lg border cursor-pointer hover:bg-slate-800/60 transition-all ${
                         selectedAvatar === av
                           ? 'bg-violet-600/35 border-violet-500 scale-110 shadow-lg shadow-violet-500/10 text-white'
-                          : 'bg-slate-950 border-slate-850 text-slate-400'
+                          : 'bg-slate-900/50 border-slate-800 text-slate-400'
                       }`}
                     >
                       {av}

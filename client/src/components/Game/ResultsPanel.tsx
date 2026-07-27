@@ -203,7 +203,7 @@ export const ResultsPanel: React.FC = () => {
       <Card>
         <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
           <h3 className="text-xs font-bold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-            <UserCheck size={14} className="text-rose-450" />
+            <UserCheck size={14} className="text-rose-500" />
             Who Voted For Whom
           </h3>
         </div>

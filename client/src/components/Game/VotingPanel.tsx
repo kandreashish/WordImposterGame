@@ -107,9 +107,9 @@ export const VotingPanel: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm ${
                     isVotedTarget 
-                      ? 'bg-rose-500/25 text-rose-450' 
+                      ? 'bg-rose-500/25 text-rose-500' 
                       : isSelf 
-                      ? 'bg-slate-900 text-slate-650' 
+                      ? 'bg-slate-900 text-slate-500' 
                       : 'bg-slate-800 text-slate-400'
                   }`}>
                     {player.avatar || '🕵️'}

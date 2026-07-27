@@ -42,7 +42,7 @@ export const VoteResolvedPanel: React.FC = () => {
         
         {candidate ? (
           <>
-            <span className="text-3xs font-extrabold text-rose-450 uppercase tracking-widest block mb-2">
+            <span className="text-3xs font-extrabold text-rose-500 uppercase tracking-widest block mb-2">
               Highest Voted Candidate
             </span>
             <div className="w-16 h-16 rounded-2xl bg-rose-600/10 border border-rose-500/35 flex items-center justify-center text-3xl mx-auto mb-3 animate-pulse shadow-lg shadow-rose-550/15">
