@@ -24,13 +24,22 @@ import {
 import { useSocket } from '../contexts/SocketContext.js';
 import { trackEvent } from '../utils/analytics.js';
 
+import { playSound, isSoundEnabled, setSoundEnabled } from '../utils/sound.js';
+
 export const Home: React.FC = () => {
   const { room, theme, toggleTheme } = useSocket();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'overview' | 'rules' | 'tips'>('overview');
-  const [soundEffect, setSoundEffect] = useState(true);
+  const [soundEffect, setSoundEffect] = useState(() => isSoundEnabled());
   const [sillySecretCount, setSillySecretCount] = useState(0);
+
+  const toggleSound = () => {
+    const next = !soundEffect;
+    setSoundEffect(next);
+    setSoundEnabled(next);
+    if (next) playSound('click');
+  };
   const [showSecretMessage, setShowSecretMessage] = useState(false);
 
   React.useEffect(() => {
@@ -109,7 +118,7 @@ export const Home: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setSoundEffect(!soundEffect)}
+            onClick={toggleSound}
             className="p-2.5 bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition-all cursor-pointer shadow-lg"
             title={soundEffect ? 'Mute Sound FX' : 'Enable Sound FX'}
           >

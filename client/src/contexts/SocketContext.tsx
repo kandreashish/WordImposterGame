@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { Room, RoomSettings } from '../../../shared/types.js';
 import { trackEvent, identifyUser } from '../utils/analytics.js';
+import { playSound, vibrateMobile } from '../utils/sound.js';
 
 interface ServerError {
   type: 'error' | 'disconnected';
@@ -118,6 +119,30 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     socketIo.on('game-state', (updatedRoom: Room) => {
       setRoom((prevRoom) => {
+        if (prevRoom) {
+          // 1. Game Started Trigger
+          if (prevRoom.status === 'LOBBY' && updatedRoom.status !== 'LOBBY') {
+            playSound('gameStart');
+            vibrateMobile([150, 100, 250]); // Distinct double-pulse for game start
+          }
+
+          // 2. Game Ended Trigger
+          if (prevRoom.status !== 'RESULTS' && updatedRoom.status === 'RESULTS') {
+            playSound('gameEnd');
+            vibrateMobile([200, 100, 200, 100, 400]); // Celebration fanfare vibration
+          }
+
+          // 3. User's Turn Trigger (in Discussion or Voting phases)
+          const selfPlayerId = playerId;
+          const wasMyTurn = prevRoom.activePlayerId === selfPlayerId;
+          const isMyTurnNow = updatedRoom.activePlayerId === selfPlayerId;
+
+          if (!wasMyTurn && isMyTurnNow) {
+            playSound('yourTurn');
+            vibrateMobile([200, 150, 200]); // Attention alert vibration pattern
+          }
+        }
+
         // Track state transitions (contextual screens)
         if (!prevRoom || prevRoom.status !== updatedRoom.status) {
           trackEvent(`enter_screen_${updatedRoom.status.toLowerCase()}`, {
