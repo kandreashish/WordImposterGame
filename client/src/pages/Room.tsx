@@ -11,7 +11,7 @@ import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
 import { Modal } from '../components/Common/Modal.js';
-import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon } from 'lucide-react';
+import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon, RotateCcw } from 'lucide-react';
 import { ErrorDialog } from '../components/Common/ErrorDialog.js';
 
 export const Room: React.FC = () => {
@@ -19,8 +19,10 @@ export const Room: React.FC = () => {
   const navigate = useNavigate();
   const {
     room,
+    playerId,
     isConnected,
     joinRoom,
+    nextRound,
     error,
     setError,
     serverError,
@@ -31,6 +33,7 @@ export const Room: React.FC = () => {
 
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [nicknameError, setNicknameError] = useState('');
+  const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
 
   // Auto join if they refreshed and local credentials match
   useEffect(() => {
@@ -157,6 +160,9 @@ export const Room: React.FC = () => {
     );
   }
 
+  const self = room.players.find(p => p.id === playerId);
+  const isHost = self?.isHost || false;
+
   // Render Room view when connected
   return (
     <div className="min-h-screen game-bg-radial flex flex-col p-4 relative overflow-x-hidden overflow-y-auto">
@@ -199,7 +205,62 @@ export const Room: React.FC = () => {
         {room.status === 'VOTING' && <VotingPanel />}
         {room.status === 'VOTE_RESOLVED' && <VoteResolvedPanel />}
         {room.status === 'RESULTS' && <ResultsPanel />}
+
+        {/* Host New Game Button at bottom during active gameplay */}
+        {isHost && room.status !== 'LOBBY' && (
+          <div className="w-full max-w-xl mx-auto mt-6 pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setIsNewGameModalOpen(true)}
+              className="px-4 py-2 rounded-xl text-xs font-extrabold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 hover:bg-rose-100 dark:hover:bg-rose-950/60 transition-all flex items-center gap-2 cursor-pointer shadow-xs"
+            >
+              <RotateCcw size={14} />
+              New Game
+            </button>
+          </div>
+        )}
       </main>
+
+      {/* Host New Game Confirmation Dialog */}
+      <Modal
+        isOpen={isNewGameModalOpen}
+        onClose={() => setIsNewGameModalOpen(false)}
+        title="Start New Game?"
+      >
+        <div className="flex flex-col items-center text-center p-3">
+          <div className="p-3 bg-rose-500/10 text-rose-500 rounded-full mb-3">
+            <RotateCcw className="w-8 h-8" />
+          </div>
+          <h3 className="text-base font-extrabold theme-text-primary uppercase tracking-wide mb-1">
+            Reset Current Match?
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6 max-w-xs">
+            Are you sure you want to end the current game? All players will be returned to the room lobby.
+          </p>
+
+          <div className="flex gap-3 w-full">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => setIsNewGameModalOpen(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="md"
+              onClick={() => {
+                setIsNewGameModalOpen(false);
+                nextRound();
+              }}
+              className="flex-1"
+            >
+              Yes, Start New
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Global Error Modal for In-Game notifications */}
       <Modal
