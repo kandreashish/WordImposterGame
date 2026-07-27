@@ -25,9 +25,39 @@ const io = new Server(server, {
   }
 });
 
-// Broadcast state update to all players in a room
+// Broadcast state update to all players in a room with sanitized anonymous vote privacy during VOTING phase
 const broadcastState = (code: string, room: any) => {
-  io.to(code).emit('game-state', room);
+  const roomSockets = io.sockets.adapter.rooms.get(code);
+  if (!roomSockets) {
+    io.to(code).emit('game-state', room);
+    return;
+  }
+
+  for (const socketId of roomSockets) {
+    const clientSocket = io.sockets.sockets.get(socketId);
+    if (!clientSocket) continue;
+
+    const recipientPlayerId = clientSocket.data.playerId;
+
+    // During VOTING phase, sanitize other players' voteTargetId so votes remain anonymous until resolution
+    if (room.status === 'VOTING') {
+      const sanitizedRoom = {
+        ...room,
+        players: room.players.map((p: any) => {
+          if (p.id === recipientPlayerId) {
+            return p; // Keep self vote target visible to self
+          }
+          return {
+            ...p,
+            voteTargetId: p.voteTargetId ? 'ANONYMOUS_LOCKED' : null // Mask target identity
+          };
+        })
+      };
+      clientSocket.emit('game-state', sanitizedRoom);
+    } else {
+      clientSocket.emit('game-state', room);
+    }
+  }
 };
 
 // Send room closed warning to all players in a room and disconnect them

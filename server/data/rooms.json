@@ -80,5 +80,316 @@
     "turnTimer": 0,
     "imposterHint": "Street vendor",
     "votedPlayerId": null
+  },
+  {
+    "code": "142963",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 60,
+      "votingTime": 30,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Animals",
+        "Food",
+        "Nature",
+        "Objects",
+        "Sports",
+        "Movies & TV",
+        "Music",
+        "Science",
+        "Places",
+        "Professions"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_x9mm53sxh",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": true,
+        "isImposter": false,
+        "word": null,
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "ghost"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 0,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": null,
+    "votedPlayerId": null
+  },
+  {
+    "code": "501225",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 60,
+      "votingTime": 30,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Animals",
+        "Food",
+        "Nature",
+        "Objects",
+        "Sports",
+        "Movies & TV",
+        "Music",
+        "Science",
+        "Places",
+        "Professions"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_x9mm53sxh",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": true,
+        "isImposter": false,
+        "word": null,
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "unicorn"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 0,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": null,
+    "votedPlayerId": null
+  },
+  {
+    "code": "165956",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 60,
+      "votingTime": 30,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Animals",
+        "Food",
+        "Nature",
+        "Objects",
+        "Sports",
+        "Movies & TV",
+        "Music",
+        "Science",
+        "Places",
+        "Professions"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_x9mm53sxh",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": true,
+        "isImposter": false,
+        "word": null,
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "wizard"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 0,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": null,
+    "votedPlayerId": null
+  },
+  {
+    "code": "485349",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 60,
+      "votingTime": 30,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Animals",
+        "Food",
+        "Nature",
+        "Objects",
+        "Sports",
+        "Movies & TV",
+        "Music",
+        "Science",
+        "Places",
+        "Professions"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_x9mm53sxh",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": true,
+        "isImposter": false,
+        "word": null,
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "robot"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 0,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": null,
+    "votedPlayerId": null
+  },
+  {
+    "code": "549988",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 20,
+      "votingTime": 50,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Professions",
+        "Nature",
+        "Objects",
+        "Animals",
+        "Sports"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_0smp6puak",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": false,
+        "isImposter": true,
+        "word": null,
+        "role": "IMPOSTER",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": "p_muxgqz4vs",
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "dino"
+      },
+      {
+        "id": "p_rkiydzstr",
+        "nickname": "AshishTwo",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": false,
+        "word": "King Cobra",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": "p_0smp6puak",
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "alien"
+      },
+      {
+        "id": "p_muxgqz4vs",
+        "nickname": "Ashish Three",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": false,
+        "word": "King Cobra",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": "p_rkiydzstr",
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "unicorn"
+      }
+    ],
+    "status": "VOTING",
+    "majorityWord": "King Cobra",
+    "imposterWord": null,
+    "timer": 44,
+    "roundResults": null,
+    "roundCount": 1,
+    "chat": [
+      {
+        "playerId": "p_rkiydzstr",
+        "nickname": "AshishTwo",
+        "text": "HIghg",
+        "timestamp": 1785160347782,
+        "roundNumber": 1
+      },
+      {
+        "playerId": "p_muxgqz4vs",
+        "nickname": "Ashish Three",
+        "text": "trew",
+        "timestamp": 1785160366106,
+        "roundNumber": 1
+      },
+      {
+        "playerId": "p_0smp6puak",
+        "nickname": "Ashish",
+        "text": "gjhgjk",
+        "timestamp": 1785160377914,
+        "roundNumber": 1
+      }
+    ],
+    "activePlayerId": "p_0smp6puak",
+    "turnOrder": [
+      "p_rkiydzstr",
+      "p_muxgqz4vs",
+      "p_0smp6puak"
+    ],
+    "currentTurnIndex": 3,
+    "turnTimer": 0,
+    "imposterHint": "Venomous snake",
+    "votedPlayerId": null
   }
 ]
