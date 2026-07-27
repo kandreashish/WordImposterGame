@@ -40,29 +40,29 @@
    DESIGN TOKENS — LIGHT
 ══════════════════════════════════════ */
 .light {
-  --color-bg-primary: #f0f2ff;
+  --color-bg-primary: #f1f3fd;
   --bg-gradient:
-    radial-gradient(ellipse 70% 55% at 15% -5%, rgba(124,58,237,0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 45% at 85% 105%, rgba(99,102,241,0.11) 0%, transparent 55%),
-    linear-gradient(160deg, #eef0ff 0%, #f5f4ff 45%, #f8f7ff 100%);
+    radial-gradient(ellipse 70% 55% at 15% -5%, rgba(124,58,237,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 85% 105%, rgba(99,102,241,0.10) 0%, transparent 55%),
+    linear-gradient(160deg, #edf0fe 0%, #f4f3ff 45%, #f8f7ff 100%);
 
-  --color-text-primary: #12122a;
-  --color-text-secondary: #4b5280;
-  --color-text-muted: #6b7280;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
 
-  --color-card-bg: rgba(255,255,255,0.72);
+  --color-card-bg: rgba(255, 255, 255, 0.88);
   --color-card-bg-solid: #ffffff;
-  --color-card-border: rgba(124,58,237,0.12);
-  --color-card-border-hover: rgba(124,58,237,0.28);
+  --color-card-border: rgba(124,58,237,0.18);
+  --color-card-border-hover: rgba(124,58,237,0.32);
 
-  --color-input-bg: rgba(255,255,255,0.85);
-  --color-input-border: rgba(124,58,237,0.18);
+  --color-input-bg: #ffffff;
+  --color-input-border: rgba(124,58,237,0.25);
 
-  --color-player-self-bg: rgba(109,40,217,0.07);
-  --color-player-self-border: rgba(124,58,237,0.28);
-  --color-player-self-glow: rgba(124,58,237,0.07);
-  --color-player-other-bg: rgba(255,255,255,0.55);
-  --color-player-other-border: rgba(124,58,237,0.10);
+  --color-player-self-bg: rgba(124,58,237,0.08);
+  --color-player-self-border: rgba(124,58,237,0.35);
+  --color-player-self-glow: rgba(124,58,237,0.08);
+  --color-player-other-bg: rgba(255,255,255,0.82);
+  --color-player-other-border: rgba(124,58,237,0.14);
 }
 
 /* ═══════════════════════════════════════
@@ -375,72 +375,93 @@ input[type="range"] { accent-color: #7c3aed; }
 .light span.text-white,
 .light p.text-white,
 .light label.text-white,
-.light div.text-white { color: var(--color-text-primary); }
+.light div.text-white { color: #0f172a; }
 
-/* Ensure primary/danger/success buttons always show white text in light mode */
-.light button.text-white { color: #ffffff !important; }
+/* Ensure primary/danger/success buttons always show crisp white text in light mode */
+.light button.text-white,
+.light button.bg-gradient-to-r,
+.light button.bg-gradient-to-tr,
+.light button.bg-violet-600,
+.light button.bg-rose-600,
+.light button.bg-emerald-600 { color: #ffffff !important; }
 
-.light .text-slate-100,
-.light .text-slate-200,
-.light .text-slate-300 { color: var(--color-text-primary); }
+.light .text-slate-100 { color: #0f172a; }
+.light .text-slate-200 { color: #1e293b; }
+.light .text-slate-300 { color: #334155; }
+.light .text-slate-400 { color: #475569; }
+.light .text-slate-500 { color: #64748b; }
+.light .text-slate-600 { color: #334155; }
 
-.light .text-slate-400 { color: #4b5280; }
-.light .text-slate-500 { color: #6b7280; }
-.light .text-slate-600 { color: #374151; }
-
-/* Card backgrounds */
+/* Card & Container backgrounds */
 .light .bg-slate-900,
 .light .bg-slate-900\/40,
 .light .bg-slate-900\/35,
+.light .bg-slate-900\/50,
 .light .bg-slate-900\/60 {
-  background-color: rgba(255,255,255,0.62);
+  background-color: rgba(255, 255, 255, 0.85);
 }
 
 .light .bg-slate-950,
+.light .bg-slate-950\/20,
 .light .bg-slate-950\/40,
+.light .bg-slate-950\/60,
 .light .bg-slate-950\/70 {
-  background-color: rgba(255,255,255,0.88);
+  background-color: rgba(241, 245, 249, 0.95);
 }
 
 /* Borders */
 .light .border-slate-800,
-.light .border-slate-900 { border-color: rgba(124,58,237,0.13); }
+.light .border-slate-800\/80,
+.light .border-slate-800\/50,
+.light .border-slate-900,
+.light .border-slate-950 { border-color: rgba(124, 58, 237, 0.18); }
 
 /* Avatar bg */
-.light .bg-slate-800 { background-color: rgba(237,233,254,0.80); }
+.light .bg-slate-800 { background-color: rgba(237, 233, 254, 0.90); }
 
-/* Violet text */
-.light .text-violet-400 { color: #7c3aed; }
+/* Violet / Accent Text */
+.light .text-violet-400 { color: #6d28d9; }
+.light .text-violet-300 { color: #7c3aed; }
 
-/* Rose / Emerald */
+/* Rose / Emerald / Amber */
 .light .text-rose-400,
-.light .text-rose-500 { color: #e11d48; }
-.light .text-rose-100 { color: #9f1239; }
-.light .text-emerald-400 { color: #059669; }
+.light .text-rose-500 { color: #be123c; }
+.light .text-rose-100 { color: #881337; }
+.light .text-emerald-400,
+.light .text-emerald-500 { color: #047857; }
 .light .text-emerald-100 { color: #064e3b; }
+.light .text-amber-400,
+.light .text-amber-500 { color: #b45309; }
 
 /* Range inputs */
 .light input[type="range"] { accent-color: #7c3aed; }
 
 /* Theme toggle */
 .light .bg-slate-900\/60 {
-  background-color: rgba(255,255,255,0.80);
-  border-color: rgba(124,58,237,0.14);
+  background-color: #ffffff;
+  border-color: rgba(124, 58, 237, 0.20);
 }
-.light .hover\:bg-slate-800:hover { background-color: rgba(237,233,254,0.70); }
-.light .hover\:text-slate-200:hover { color: #7c3aed; }
+.light .hover\:bg-slate-800:hover { background-color: rgba(237, 233, 254, 0.80); }
+.light .hover\:text-slate-200:hover { color: #6d28d9; }
 
-/* Inputs in light mode */
+/* Form inputs & text fields in light mode */
+.light input.glass-input,
 .light input.bg-slate-950,
-.light select.bg-slate-950 {
-  background-color: rgba(255,255,255,0.95);
-  color: #12122a;
-  border-color: rgba(124,58,237,0.20);
+.light select.bg-slate-950,
+.light input[type="text"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(124, 58, 237, 0.25) !important;
+}
+
+.light input::placeholder {
+  color: #64748b !important;
+  opacity: 0.9;
 }
 
 /* Modal overlay */
-.light .bg-slate-950\/70 { background-color: rgba(12,10,40,0.45); }
+.light .bg-slate-950\/70 { background-color: rgba(15, 23, 42, 0.50); }
 
 /* Inner connected pill */
-.light .bg-emerald-500\/10 { background-color: rgba(16,185,129,0.10); }
-.light .border-emerald-500\/20 { border-color: rgba(16,185,129,0.25); }
+.light .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.12); }
+.light .border-emerald-500\/20 { border-color: rgba(16, 185, 129, 0.30); }
