@@ -4,9 +4,24 @@ import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
 import { Crown, LogOut, RefreshCw, Trophy, UserCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { trackEvent } from '../../utils/analytics.js';
 
 export const ResultsPanel: React.FC = () => {
   const { room, playerId, nextRound, leaveRoom } = useSocket();
+
+  useEffect(() => {
+    if (room && room.roundResults) {
+      const self = room.players.find(p => p.id === playerId);
+      const isWinner = self?.role === room.roundResults.winnerRole;
+      trackEvent('game_round_ended', {
+        screen: 'Results',
+        winnerRole: room.roundResults.winnerRole,
+        isWinner,
+        wasImposterVotedOut: room.roundResults.wasImposterVotedOut,
+        roomCode: room.code
+      });
+    }
+  }, []);
 
   if (!room || !room.roundResults) return null;
 

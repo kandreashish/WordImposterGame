@@ -3,6 +3,7 @@ import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
 import { Eye, EyeOff, HelpCircle, ShieldAlert } from 'lucide-react';
+import { trackEvent } from '../../utils/analytics.js';
 
 export const RevealPanel: React.FC = () => {
   const { room, playerId } = useSocket();
@@ -31,9 +32,11 @@ export const RevealPanel: React.FC = () => {
         <Timer value={room.timer} total={10} />
       </div>
 
-      {/* 3D Card Container */}
       <div 
-        onClick={() => setIsRevealed(!isRevealed)}
+        onClick={() => {
+          setIsRevealed(!isRevealed);
+          trackEvent('click_reveal_word', { screen: 'Reveal', isRevealed: !isRevealed, isImposter });
+        }}
         className="w-full h-80 perspective-1000 cursor-pointer group"
       >
         <div className={`relative w-full h-full duration-500 preserve-3d transition-transform ${

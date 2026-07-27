@@ -5,6 +5,7 @@ import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
 import { ArrowLeft, Sun, Moon } from 'lucide-react';
+import { trackEvent } from '../utils/analytics.js';
 
 export const JoinRoom: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ export const JoinRoom: React.FC = () => {
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [roomCode, setRoomCode] = useState(() => searchParams.get('code') || '');
   const [errors, setErrors] = useState<{ nickname?: string; roomCode?: string }>({});
+
+  useEffect(() => {
+    trackEvent('enter_screen_join_room', { screen: 'JoinRoom' });
+  }, []);
 
   useEffect(() => {
     if (room) {
@@ -57,7 +62,7 @@ export const JoinRoom: React.FC = () => {
       <div className="absolute bottom-1/4 right-1/4 w-82 h-82 bg-indigo-600/5 rounded-full blur-3xl" />
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
+        <Link to="/" onClick={() => trackEvent('click_back_to_home_nav', { screen: 'JoinRoom' })} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>

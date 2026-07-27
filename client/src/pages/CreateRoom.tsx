@@ -16,9 +16,15 @@ const formatSeconds = (seconds: number): string => {
   return `${m}m ${s}s`;
 };
 
+import { trackEvent } from '../utils/analytics.js';
+
 export const CreateRoom: React.FC = () => {
   const navigate = useNavigate();
   const { room, createRoom, theme, toggleTheme } = useSocket();
+
+  useEffect(() => {
+    trackEvent('enter_screen_create_room', { screen: 'CreateRoom' });
+  }, []);
 
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [gameMode, setGameMode] = useState<GameMode>(() => {
@@ -56,26 +62,32 @@ export const CreateRoom: React.FC = () => {
   const handleGameMode = (val: GameMode) => {
     setGameMode(val);
     localStorage.setItem('wi_settings_gamemode', val);
+    trackEvent('change_gamemode_setting', { screen: 'CreateRoom', mode: val });
   };
   const handleDiscussionTime = (val: number) => {
     setDiscussionTime(val);
     localStorage.setItem('wi_settings_discussion', String(val));
+    trackEvent('change_discussion_timer_setting', { screen: 'CreateRoom', seconds: val });
   };
   const handleVotingTime = (val: number) => {
     setVotingTime(val);
     localStorage.setItem('wi_settings_voting', String(val));
+    trackEvent('change_voting_timer_setting', { screen: 'CreateRoom', seconds: val });
   };
   const handleMaxPlayers = (val: number) => {
     setMaxPlayers(val);
     localStorage.setItem('wi_settings_maxplayers', String(val));
+    trackEvent('change_maxplayers_setting', { screen: 'CreateRoom', count: val });
   };
   const handleImposterCount = (val: number) => {
     setImposterCount(val);
     localStorage.setItem('wi_settings_impostercount', String(val));
+    trackEvent('change_impostercount_setting', { screen: 'CreateRoom', count: val });
   };
   const handleCategory = (val: string) => {
     setCategory(val);
     localStorage.setItem('wi_settings_category', val);
+    trackEvent('change_category_setting', { screen: 'CreateRoom', category: val });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -112,7 +124,7 @@ export const CreateRoom: React.FC = () => {
       <div className="absolute bottom-1/4 right-1/4 w-82 h-82 bg-indigo-600/5 rounded-full blur-3xl" />
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
+        <Link to="/" onClick={() => trackEvent('click_back_to_home_nav', { screen: 'CreateRoom' })} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>

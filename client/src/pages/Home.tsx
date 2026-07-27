@@ -4,9 +4,22 @@ import { Card } from '../components/Common/Card.js';
 import { Button } from '../components/Common/Button.js';
 import { HelpCircle, Sparkles, Sun, Moon } from 'lucide-react';
 import { useSocket } from '../contexts/SocketContext.js';
+import { trackEvent } from '../utils/analytics.js';
 
 export const Home: React.FC = () => {
   const { theme, toggleTheme } = useSocket();
+
+  React.useEffect(() => {
+    trackEvent('enter_screen_home', { screen: 'Home' });
+  }, []);
+
+  const handleCreateNav = () => {
+    trackEvent('click_create_room_nav', { screen: 'Home' });
+  };
+
+  const handleJoinNav = () => {
+    trackEvent('click_join_room_nav', { screen: 'Home' });
+  };
 
   return (
     <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden">
@@ -44,12 +57,12 @@ export const Home: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex flex-col gap-4 w-full">
-            <Link to="/create" className="w-full">
+            <Link to="/create" onClick={handleCreateNav} className="w-full">
               <Button size="lg" fullWidth>
                 Create Room
               </Button>
             </Link>
-            <Link to="/join" className="w-full">
+            <Link to="/join" onClick={handleJoinNav} className="w-full">
               <Button variant="secondary" size="lg" fullWidth>
                 Join Room
               </Button>

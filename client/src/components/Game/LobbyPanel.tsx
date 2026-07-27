@@ -3,6 +3,7 @@ import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
 import { Copy, Share2, Crown, Trash2, CheckCircle2, WifiOff, QrCode, Edit2, X } from 'lucide-react';
+import { trackEvent } from '../../utils/analytics.js';
 
 const AVATARS = ['🦊', '🐼', '🤖', '👽', '👻', '🦄', '🦁', '🐸', '🍕', '🥑', '🎮', '👑', '🕵️', '🐱', '🐶'];
 
@@ -31,6 +32,7 @@ export const LobbyPanel: React.FC = () => {
   };
 
   const handleCopyCode = async () => {
+    trackEvent('click_copy_room_code', { screen: 'Lobby', roomCode: room.code });
     try {
       await navigator.clipboard.writeText(room.code);
       setCopyText('Copied!');
@@ -41,6 +43,7 @@ export const LobbyPanel: React.FC = () => {
   };
 
   const handleShareLink = async () => {
+    trackEvent('click_share_room_link', { screen: 'Lobby', roomCode: room.code });
     const shareData = {
       title: 'Join my Word Imposter game!',
       text: `Join room code ${room.code} to play Word Imposter.`,
@@ -70,6 +73,7 @@ export const LobbyPanel: React.FC = () => {
       setSelectedAvatar(self.avatar || '🕵️');
       setNameError('');
       setIsEditModalOpen(true);
+      trackEvent('click_open_edit_profile', { screen: 'Lobby' });
     }
   };
 
@@ -83,6 +87,7 @@ export const LobbyPanel: React.FC = () => {
     changeNickname(newNickname.trim());
     changeAvatar(selectedAvatar);
     setIsEditModalOpen(false);
+    trackEvent('click_save_profile', { screen: 'Lobby', nickname: newNickname.trim(), avatar: selectedAvatar });
   };
 
   return (

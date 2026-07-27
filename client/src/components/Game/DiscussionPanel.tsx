@@ -4,6 +4,7 @@ import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
 import { Button } from '../Common/Button.js';
 import { Eye, EyeOff, MessageSquareText, Sparkles, User, Send, Volume2, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { trackEvent } from '../../utils/analytics.js';
 
 export const DiscussionPanel: React.FC = () => {
   const { room, playerId, submitClue, doneSpeaking } = useSocket();
@@ -215,7 +216,10 @@ export const DiscussionPanel: React.FC = () => {
         </div>
 
         <button
-          onClick={() => setShowWord(!showWord)}
+          onClick={() => {
+            setShowWord(!showWord);
+            trackEvent('click_toggle_secret_pocket', { screen: 'Discussion', visible: !showWord });
+          }}
           className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
           title={showWord ? 'Hide Word' : 'Show Word'}
         >

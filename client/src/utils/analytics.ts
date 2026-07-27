@@ -1,0 +1,35 @@
+import mixpanel from 'mixpanel-browser';
+
+const MIXPANEL_TOKEN = '2fb55a5b1ea285872b1ab4e405f76ac6';
+
+// Initialize Mixpanel with local storage persistence
+mixpanel.init(MIXPANEL_TOKEN, {
+  debug: false,
+  track_pageview: true,
+  persistence: 'localStorage'
+});
+
+export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
+  try {
+    mixpanel.track(eventName, {
+      ...properties,
+      timestamp: new Date().toISOString(),
+      screen: properties?.screen || 'unknown'
+    });
+  } catch (error) {
+    console.error('Mixpanel track error:', error);
+  }
+};
+
+export const identifyUser = (distinctId: string, traits?: Record<string, any>) => {
+  try {
+    mixpanel.identify(distinctId);
+    if (traits) {
+      mixpanel.people.set(traits);
+    }
+  } catch (error) {
+    console.error('Mixpanel identify error:', error);
+  }
+};
+
+export default mixpanel;
