@@ -258,16 +258,16 @@ export const DiscussionPanel: React.FC = () => {
       </div>
 
       {/* Secret Word Pocket Reminder */}
-      <Card className="p-4 border-slate-800 bg-slate-900/60 flex flex-row items-center justify-between mt-2">
+      <Card className="p-4 border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/60 flex flex-row items-center justify-between mt-2">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 bg-slate-800 text-slate-400 rounded-lg">
+          <div className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-lg">
             <Sparkles size={16} />
           </div>
           <div className="flex flex-col">
             <span className="text-4xs font-bold text-slate-500 uppercase tracking-widest">
-              My Secret Word Pocket
+              Show secret word
             </span>
-            <span className="text-xs font-bold text-slate-300">
+            <span className="text-xs font-bold theme-text-primary">
               {showWord 
                 ? (self.isImposter && room.settings.gameMode === 'classic' ? 'No Word' : self.word)
                 : '••••••••••'
@@ -281,7 +281,7 @@ export const DiscussionPanel: React.FC = () => {
             setShowWord(!showWord);
             trackEvent('click_toggle_secret_pocket', { screen: 'Discussion', visible: !showWord });
           }}
-          className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
+          className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
           title={showWord ? 'Hide Word' : 'Show Word'}
         >
           {showWord ? <EyeOff size={18} /> : <Eye size={18} />}
