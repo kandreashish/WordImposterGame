@@ -4,13 +4,15 @@ import { useSocket } from '../contexts/SocketContext.js';
 import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
-import { ArrowLeft, Sun, Moon } from 'lucide-react';
+import { Modal } from '../components/Common/Modal.js';
+import { ErrorDialog } from '../components/Common/ErrorDialog.js';
+import { ArrowLeft, Sun, Moon, AlertTriangle } from 'lucide-react';
 import { trackEvent } from '../utils/analytics.js';
 
 export const JoinRoom: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { room, joinRoom, theme, toggleTheme } = useSocket();
+  const { room, joinRoom, error, setError, serverError, clearServerError, theme, toggleTheme } = useSocket();
 
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [roomCode, setRoomCode] = useState(() => searchParams.get('code') || '');
@@ -109,6 +111,34 @@ export const JoinRoom: React.FC = () => {
           </form>
         </Card>
       </div>
+
+      {/* Global Error Modal for Join Errors */}
+      <Modal
+        isOpen={error !== null}
+        onClose={() => setError(null)}
+        title="Cannot Join Room"
+      >
+        <div className="flex flex-col items-center text-center p-2">
+          <AlertTriangle className="text-rose-500 w-12 h-12 mb-3" />
+          <p className="text-sm font-semibold text-slate-300 leading-relaxed mb-4">
+            {error}
+          </p>
+          <Button variant="secondary" size="md" onClick={() => setError(null)} fullWidth>
+            Understood
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Server Error Dialog */}
+      <ErrorDialog
+        isOpen={serverError !== null}
+        type={serverError?.type}
+        title={serverError?.title}
+        message={serverError?.message ?? ''}
+        onRetry={() => { clearServerError(); window.location.reload(); }}
+        onGoHome={() => { clearServerError(); window.location.reload(); }}
+        buttonText="Refresh Page"
+      />
     </div>
   );
 };
