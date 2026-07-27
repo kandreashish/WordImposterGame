@@ -73,6 +73,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Establish connection to same host since server serves client, or localhost for local dev proxy
     const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:6969' : window.location.origin;
     const socketIo = io(socketUrl, {
+      path: '/wordgame/socket.io',
       autoConnect: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 1000

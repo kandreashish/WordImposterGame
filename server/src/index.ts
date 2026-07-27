@@ -18,6 +18,7 @@ const PORT = process.env.PORT || 6969;
 const server = createServer(app);
 
 const io = new Server(server, {
+  path: '/wordgame/socket.io',
   cors: {
     origin: '*',
     methods: ['GET', 'POST']
@@ -286,10 +287,10 @@ if (!clientBuildPath) {
 }
 
 console.log(`Serving static client files from: ${clientBuildPath}`);
-app.use(express.static(clientBuildPath));
+app.use('/wordgame', express.static(clientBuildPath));
 
 // React SPA fallback routing
-app.get('*', (req, res) => {
+app.get('/wordgame*', (req, res) => {
   res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
