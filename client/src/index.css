@@ -7,29 +7,29 @@
    DESIGN TOKENS — DARK (default)
 ══════════════════════════════════════ */
 :root {
-  --color-bg-primary: #050816;
+  --color-bg-primary: #090d16;
   --bg-gradient: 
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(124,58,237,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 110%, rgba(79,70,229,0.14) 0%, transparent 55%),
-    linear-gradient(160deg, #080d1f 0%, #050816 50%, #06061a 100%);
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(124,58,237,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 110%, rgba(79,70,229,0.18) 0%, transparent 55%),
+    linear-gradient(160deg, #0f172a 0%, #090d16 50%, #060911 100%);
 
-  --color-text-primary: #f1f5f9;
+  --color-text-primary: #f8fafc;
   --color-text-secondary: #94a3b8;
-  --color-text-muted: #cbd5e1;
+  --color-text-muted: #64748b;
 
-  --color-card-bg: rgba(13, 18, 42, 0.70);
-  --color-card-bg-solid: #0d1229;
-  --color-card-border: rgba(148, 114, 255, 0.10);
-  --color-card-border-hover: rgba(148, 114, 255, 0.22);
+  --color-card-bg: rgba(15, 23, 42, 0.75);
+  --color-card-bg-solid: #0f172a;
+  --color-card-border: rgba(124, 58, 237, 0.25);
+  --color-card-border-hover: rgba(124, 58, 237, 0.45);
 
-  --color-input-bg: rgba(8, 12, 32, 0.55);
-  --color-input-border: rgba(148, 114, 255, 0.14);
+  --color-input-bg: rgba(15, 23, 42, 0.60);
+  --color-input-border: rgba(124, 58, 237, 0.30);
 
-  --color-player-self-bg: rgba(109,40,217,0.12);
-  --color-player-self-border: rgba(167,139,250,0.45);
-  --color-player-self-glow: rgba(124,58,237,0.18);
-  --color-player-other-bg: rgba(13,18,42,0.50);
-  --color-player-other-border: rgba(148,114,255,0.08);
+  --color-player-self-bg: rgba(124,58,237,0.16);
+  --color-player-self-border: rgba(167,139,250,0.50);
+  --color-player-self-glow: rgba(124,58,237,0.25);
+  --color-player-other-bg: rgba(15,23,42,0.60);
+  --color-player-other-border: rgba(148,114,255,0.15);
 
   --grad-primary: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
   --grad-primary-hover: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
@@ -52,10 +52,10 @@
   --color-text-secondary: #475569;
   --color-text-muted: #64748b;
 
-  --color-card-bg: rgba(255, 255, 255, 0.88);
+  --color-card-bg: rgba(255, 255, 255, 0.90);
   --color-card-bg-solid: #ffffff;
-  --color-card-border: rgba(124,58,237,0.18);
-  --color-card-border-hover: rgba(124,58,237,0.32);
+  --color-card-border: rgba(124,58,237,0.20);
+  --color-card-border-hover: rgba(124,58,237,0.35);
 
   --color-input-bg: #ffffff;
   --color-input-border: rgba(124,58,237,0.25);
@@ -72,15 +72,6 @@
 ══════════════════════════════════════ */
 @theme {
   --font-sans: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-
-  --color-slate-950: var(--color-bg-primary);
-  --color-slate-900: var(--color-card-bg-solid);
-  --color-slate-800: rgba(99, 102, 110, 0.15);
-  --color-slate-500: var(--color-text-secondary);
-  --color-slate-400: var(--color-text-secondary);
-  --color-slate-300: var(--color-text-muted);
-  --color-slate-200: var(--color-text-primary);
-  --color-slate-100: var(--color-text-primary);
 
   --color-primary-violet: #7c3aed;
   --color-primary-indigo: #4f46e5;
