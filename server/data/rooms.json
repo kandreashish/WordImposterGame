@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "code": "333113",
+    "settings": {
+      "gameMode": "classic",
+      "discussionTime": 0,
+      "votingTime": 10,
+      "maxPlayers": 8,
+      "imposterCount": 1,
+      "categories": [
+        "Professions",
+        "Nature",
+        "Objects",
+        "Animals",
+        "Sports"
+      ]
+    },
+    "players": [
+      {
+        "id": "p_0smp6puak",
+        "nickname": "Ashish",
+        "isHost": true,
+        "isReady": false,
+        "isImposter": false,
+        "word": "Pandit",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "ghost"
+      },
+      {
+        "id": "p_rkiydzstr",
+        "nickname": "AshishTwo",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": false,
+        "word": "Pandit",
+        "role": "MAJORITY",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "fox"
+      },
+      {
+        "id": "p_muxgqz4vs",
+        "nickname": "Ashish Three",
+        "isHost": false,
+        "isReady": false,
+        "isImposter": true,
+        "word": null,
+        "role": "IMPOSTER",
+        "isAlive": true,
+        "score": 0,
+        "voteTargetId": null,
+        "isConnected": false,
+        "socketId": null,
+        "avatar": "unicorn"
+      }
+    ],
+    "status": "LOBBY",
+    "majorityWord": "Pandit",
+    "imposterWord": null,
+    "timer": 0,
+    "roundResults": null,
+    "roundCount": 1,
+    "chat": [],
+    "activePlayerId": null,
+    "turnOrder": [],
+    "currentTurnIndex": 0,
+    "turnTimer": 0,
+    "imposterHint": "Religious priest",
+    "votedPlayerId": null
+  }
+]

@@ -260,6 +260,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const submitVote = (targetPlayerId: string) => {
     if (!socket) return;
+    playSound('vote');
+    vibrateMobile(40);
     trackEvent('click_submit_vote', { screen: 'Voting', targetId: targetPlayerId });
     socket.emit('submit-vote', { targetPlayerId });
   };

@@ -29,7 +29,7 @@ export const VotingPanel: React.FC = () => {
   }));
 
   const handleVoteSubmit = (targetPlayerId: string) => {
-    if (hasVoted || !isAlive) return;
+    if (!isAlive) return;
     submitVote(targetPlayerId);
   };
 
@@ -63,12 +63,17 @@ export const VotingPanel: React.FC = () => {
           </p>
         </Card>
       ) : hasVoted ? (
-        <Card className="border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/80 dark:bg-emerald-950/10 text-center py-4">
-          <CheckCircle2 className="text-emerald-600 dark:text-emerald-400 w-8 h-8 mx-auto mb-2 animate-bounce" />
-          <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">Your vote is locked in</h3>
-          <p className="text-xs text-emerald-700/80 dark:text-slate-400 mt-1 leading-normal font-medium">
-            Waiting for other players to submit their votes...
-          </p>
+        <Card className="border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-50/80 dark:bg-emerald-950/10 py-3.5 flex items-center justify-between px-4">
+          <div className="flex items-center gap-2.5">
+            <CheckCircle2 className="text-emerald-600 dark:text-emerald-400 w-5 h-5 flex-shrink-0 animate-pulse" />
+            <div className="flex flex-col text-left">
+              <h3 className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">Vote Recorded</h3>
+              <p className="text-4xs text-emerald-700/80 dark:text-slate-400 font-medium">Click any candidate card to change your vote before timer ends.</p>
+            </div>
+          </div>
+          <span className="text-5xs font-extrabold bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded-md uppercase tracking-wider whitespace-nowrap">
+            Can Change
+          </span>
         </Card>
       ) : (
         <Card className="border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/40 text-center py-3">
@@ -88,7 +93,7 @@ export const VotingPanel: React.FC = () => {
           {alivePlayers.map((player) => {
             const isSelf = player.id === playerId;
             const isMyVotedTarget = self.voteTargetId === player.id;
-            const disabled = hasVoted || !isAlive;
+            const disabled = !isAlive;
 
             // Count live votes cast against this player by anyone
             const votesForThisPlayer = room.players.filter(p => p.voteTargetId === player.id);
