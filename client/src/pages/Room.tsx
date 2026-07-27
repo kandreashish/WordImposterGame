@@ -187,7 +187,9 @@ export const Room: React.FC = () => {
         type={serverError?.type}
         title={serverError?.title}
         message={serverError?.message ?? ''}
-        onGoHome={() => { clearServerError(); navigate('/'); }}
+        onRetry={() => { clearServerError(); window.location.reload(); }}
+        onGoHome={() => { clearServerError(); window.location.reload(); }}
+        buttonText="Refresh Page"
       />
     </div>
   );

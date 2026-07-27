@@ -105,7 +105,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       // Attempt reconnection if we were previously in a room
       const savedRoomCode = localStorage.getItem('wi_room_code');
-      if (savedRoomCode && playerId) {
+      if (savedRoomCode && playerId && !socketIo.data?.creatingRoom) {
         socketIo.emit('reconnect-player', { playerId, roomCode: savedRoomCode });
       }
     });
@@ -147,11 +147,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socketIo.on('reconnect-failed', () => {
       console.log('Reconnection failed - clearing cached room state');
       localStorage.removeItem('wi_room_code');
-      setRoom(null);
-      setServerError({
-        type: 'disconnected',
-        title: 'Reconnection Failed',
-        message: 'We couldn\'t reconnect you to the room. It may have been closed or expired.',
+      // Only set server error if we aren't currently connected to a room
+      setRoom((currentRoom) => {
+        if (!currentRoom) {
+          setServerError({
+            type: 'disconnected',
+            title: 'Reconnection Failed',
+            message: 'We couldn\'t reconnect you to the room. It may have been closed or expired.',
+          });
+        }
+        return currentRoom;
       });
       trackEvent('reconnect_failed', { screen: 'Room' });
     });
@@ -175,6 +180,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const createRoom = (nickName: string, settings: RoomSettings) => {
     if (!socket) return;
     setError(null);
+    setServerError(null);
+    localStorage.removeItem('wi_room_code');
     localStorage.setItem('wi_nickname', nickName);
     setNickname(nickName);
     identifyUser(playerId, { nickname: nickName });
@@ -185,7 +192,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const joinRoom = (nickName: string, roomCode: string) => {
     if (!socket) return;
     setError(null);
+    setServerError(null);
     const cleanedCode = roomCode.trim();
+    localStorage.removeItem('wi_room_code');
     localStorage.setItem('wi_nickname', nickName);
     setNickname(nickName);
     identifyUser(playerId, { nickname: nickName });

@@ -10,6 +10,7 @@ interface ErrorDialogProps {
   type?: 'error' | 'disconnected';
   onRetry?: () => void;
   onGoHome: () => void;
+  buttonText?: string;
 }
 
 export const ErrorDialog: React.FC<ErrorDialogProps> = ({
@@ -19,6 +20,7 @@ export const ErrorDialog: React.FC<ErrorDialogProps> = ({
   type = 'error',
   onRetry,
   onGoHome,
+  buttonText = 'Go to Home',
 }) => {
   if (!isOpen) return null;
 
@@ -87,8 +89,8 @@ export const ErrorDialog: React.FC<ErrorDialogProps> = ({
             </Button>
           )}
           <Button variant="secondary" size="md" fullWidth onClick={onGoHome} className="gap-2">
-            <Home size={15} />
-            Go to Home
+            {buttonText.includes('Refresh') ? <RefreshCw size={15} /> : <Home size={15} />}
+            {buttonText}
           </Button>
         </div>
       </div>
