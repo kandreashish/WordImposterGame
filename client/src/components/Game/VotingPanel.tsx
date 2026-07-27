@@ -87,7 +87,7 @@ export const VotingPanel: React.FC = () => {
           {alivePlayers.map((player) => {
             const isSelf = player.id === playerId;
             const isVotedTarget = self.voteTargetId === player.id;
-            const disabled = hasVoted || isSelf || !isAlive || !player.isConnected;
+            const disabled = hasVoted || isSelf || !isAlive;
 
             return (
               <button
@@ -115,7 +115,7 @@ export const VotingPanel: React.FC = () => {
                       {isSelf && ' (You)'}
                     </span>
                     {!player.isConnected && (
-                      <span className="text-5xs text-red-400 font-semibold uppercase tracking-wider">Offline</span>
+                      <span className="text-5xs text-rose-400/80 font-bold uppercase tracking-wider">Offline (Can still vote off)</span>
                     )}
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export const VotingPanel: React.FC = () => {
         </span>
         <div className="flex flex-wrap gap-2">
           {votingStatus
-            .filter(p => p.isAlive && p.isConnected)
+            .filter(p => p.isAlive)
             .map((p, idx) => (
               <div
                 key={idx}
@@ -152,6 +152,9 @@ export const VotingPanel: React.FC = () => {
                   <AvatarDisplay avatarId={p.avatar || 'fox'} size={24} />
                 </div>
                 <span>{p.nickname}</span>
+                {!p.isConnected && (
+                  <span className="text-5xs text-rose-400/80 font-bold">(Offline)</span>
+                )}
                 {p.hasVoted ? (
                   <X size={11} className="text-rose-400 flex-shrink-0 stroke-[3]" />
                 ) : (
