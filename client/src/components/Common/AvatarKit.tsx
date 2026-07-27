@@ -414,9 +414,9 @@ const Clown: React.FC<{ size: number }> = ({ size }) => (
 ───────────────────────────────────────── */
 
 export const AVATARS: AvatarDef[] = [
-  { id: 'fox',       label: 'Fox',      type: 'img', src: '/avatars/fox.jpg' },
-  { id: 'alien',     label: 'Alien',    type: 'img', src: '/avatars/alien.jpg' },
-  { id: 'robot',     label: 'Robot',    type: 'img', src: '/avatars/robot.jpg' },
+  { id: 'fox',       label: 'Fox',      type: 'img', src: `${import.meta.env.BASE_URL}avatars/fox.jpg` },
+  { id: 'alien',     label: 'Alien',    type: 'img', src: `${import.meta.env.BASE_URL}avatars/alien.jpg` },
+  { id: 'robot',     label: 'Robot',    type: 'img', src: `${import.meta.env.BASE_URL}avatars/robot.jpg` },
   { id: 'ghost',     label: 'Ghost',    type: 'svg', Render: Ghost },
   { id: 'panda',     label: 'Panda',    type: 'svg', Render: Panda },
   { id: 'unicorn',   label: 'Unicorn',  type: 'svg', Render: Unicorn },
