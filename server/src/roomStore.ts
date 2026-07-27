@@ -257,7 +257,7 @@ export class RoomStore {
 
     this.touchRoom(code);
 
-    // Setup 60s seat reservation timer
+    // Setup 10-minute seat reservation timer (allows container restart / network drops)
     const roomDisconnects = this.disconnectTimers.get(code);
     if (roomDisconnects) {
       // Clear any existing
@@ -267,7 +267,7 @@ export class RoomStore {
       const timeout = setTimeout(() => {
         console.log(`Seat reservation expired for ${player.nickname} in room ${code}`);
         this.removePlayer(code, playerId);
-      }, 60000);
+      }, 10 * 60 * 1000);
 
       roomDisconnects.set(playerId, timeout);
     }
