@@ -26,6 +26,12 @@ export const CreateRoom: React.FC = () => {
     trackEvent('enter_screen_create_room', { screen: 'CreateRoom' });
   }, []);
 
+  const blurActiveInput = () => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  };
+
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [gameMode, setGameMode] = useState<GameMode>(() => {
     const saved = localStorage.getItem('wi_settings_gamemode');
@@ -146,7 +152,6 @@ export const CreateRoom: React.FC = () => {
               }}
               error={errors.nickname}
               maxLength={15}
-              autoFocus
             />
 
             {/* Game Mode */}
@@ -204,6 +209,7 @@ export const CreateRoom: React.FC = () => {
                   step={5}
                   value={discussionTime}
                   onChange={(e) => handleDiscussionTime(Number(e.target.value))}
+                  onPointerDown={blurActiveInput}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
                 />
                 <div className="flex justify-between text-4xs text-slate-500 px-1">
@@ -228,6 +234,7 @@ export const CreateRoom: React.FC = () => {
                   step={5}
                   value={votingTime}
                   onChange={(e) => handleVotingTime(Number(e.target.value))}
+                  onPointerDown={blurActiveInput}
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
                 />
                 <div className="flex justify-between text-4xs text-slate-500 px-1">
@@ -248,6 +255,7 @@ export const CreateRoom: React.FC = () => {
                 <select
                   value={imposterCount}
                   onChange={(e) => handleImposterCount(Number(e.target.value))}
+                  onPointerDown={blurActiveInput}
                   className="glass-input px-3 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none w-full bg-slate-950 border border-slate-800 cursor-pointer"
                 >
                   <option value={1} className="bg-slate-950">1 Imposter</option>
@@ -263,6 +271,7 @@ export const CreateRoom: React.FC = () => {
                 <select
                   value={category}
                   onChange={(e) => handleCategory(e.target.value)}
+                  onPointerDown={blurActiveInput}
                   className="glass-input px-3 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none w-full bg-slate-950 border border-slate-800 cursor-pointer"
                 >
                   <option value="All" className="bg-slate-950">All Categories</option>
@@ -289,6 +298,7 @@ export const CreateRoom: React.FC = () => {
                 max={12}
                 value={maxPlayers}
                 onChange={(e) => handleMaxPlayers(Number(e.target.value))}
+                onPointerDown={blurActiveInput}
                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
               />
               <div className="flex justify-between text-4xs text-slate-500 px-1">
