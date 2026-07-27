@@ -105,7 +105,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       // Attempt reconnection if we were previously in a room
       const savedRoomCode = localStorage.getItem('wi_room_code');
-      if (savedRoomCode && playerId && !socketIo.data?.creatingRoom) {
+      if (savedRoomCode && playerId) {
         socketIo.emit('reconnect-player', { playerId, roomCode: savedRoomCode });
       }
     });
