@@ -26,7 +26,12 @@ export const LobbyPanel: React.FC = () => {
   const connectedPlayersCount = room.players.filter(p => p.isConnected).length;
   const canStartGame = connectedPlayersCount >= 3;
 
-  const getJoinUrl = () => `${window.location.origin}/join?code=${room.code}`;
+  const getJoinUrl = () => {
+    const baseUrl = import.meta.env.BASE_URL ? import.meta.env.BASE_URL.replace(/\/$/, '') : '/wordgame';
+    return `${window.location.origin}${baseUrl}/join?code=${room.code}`;
+  };
+
+  const getShareMessage = () => `Join room code ${room.code} to play Word Imposter. ${getJoinUrl()}`;
 
   const handleCopyCode = async () => {
     trackEvent('click_copy_room_code', { screen: 'Lobby', roomCode: room.code });
@@ -41,6 +46,7 @@ export const LobbyPanel: React.FC = () => {
 
   const handleShareLink = async () => {
     trackEvent('click_share_room_link', { screen: 'Lobby', roomCode: room.code });
+    const shareMessage = getShareMessage();
     const shareData = {
       title: 'Join my Word Imposter game!',
       text: `Join room code ${room.code} to play Word Imposter.`,
@@ -50,7 +56,7 @@ export const LobbyPanel: React.FC = () => {
       try { await navigator.share(shareData); } catch (err) { console.log('Share canceled', err); }
     } else {
       try {
-        await navigator.clipboard.writeText(getJoinUrl());
+        await navigator.clipboard.writeText(shareMessage);
         setShareText('Copied!');
         setTimeout(() => setShareText('Share'), 2000);
       } catch (err) { console.error('Failed to copy link', err); }
