@@ -50,7 +50,32 @@ export const Room: React.FC = () => {
     joinRoom(nickname.trim(), roomId);
   };
 
+  // Check if we are currently attempting reconnection or initial connection
+  const savedRoomCode = localStorage.getItem('wi_room_code');
+  const isAutoReconnecting = savedRoomCode === roomId && (!isConnected || serverError === null);
+
   if (!room) {
+    if (isAutoReconnecting && !error && serverError === null) {
+      return (
+        <div className="min-h-screen game-bg-radial flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+          <div className="flex flex-col items-center gap-4 text-center z-10">
+            <div className="relative w-16 h-16 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-violet-500/20 animate-ping" />
+              <div className="w-16 h-16 rounded-full border-4 border-violet-500 border-t-transparent animate-spin" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-black text-white uppercase tracking-wider">
+                Connecting to Room...
+              </h3>
+              <p className="text-xs font-medium text-slate-400">
+                Entering room <span className="text-violet-400 font-bold">{roomId}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen game-bg-radial flex flex-col items-center justify-start md:justify-center p-4 relative overflow-x-hidden">
         {/* Theme Toggle Button */}
@@ -117,6 +142,17 @@ export const Room: React.FC = () => {
             </Button>
           </div>
         </Modal>
+
+        {/* Server Error Dialog */}
+        <ErrorDialog
+          isOpen={serverError !== null}
+          type={serverError?.type}
+          title={serverError?.title}
+          message={serverError?.message ?? ''}
+          onRetry={() => { clearServerError(); window.location.reload(); }}
+          onGoHome={() => { clearServerError(); window.location.reload(); }}
+          buttonText="Refresh Page"
+        />
       </div>
     );
   }
