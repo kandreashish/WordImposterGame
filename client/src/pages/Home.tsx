@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card } from '../components/Common/Card.js';
 import { Button } from '../components/Common/Button.js';
 import { HelpCircle, Sparkles, Sun, Moon } from 'lucide-react';
@@ -7,11 +7,18 @@ import { useSocket } from '../contexts/SocketContext.js';
 import { trackEvent } from '../utils/analytics.js';
 
 export const Home: React.FC = () => {
-  const { theme, toggleTheme } = useSocket();
+  const { room, theme, toggleTheme } = useSocket();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     trackEvent('enter_screen_home', { screen: 'Home' });
   }, []);
+
+  React.useEffect(() => {
+    if (room?.code) {
+      navigate(`/room/${room.code}`);
+    }
+  }, [room, navigate]);
 
   const handleCreateNav = () => {
     trackEvent('click_create_room_nav', { screen: 'Home' });
