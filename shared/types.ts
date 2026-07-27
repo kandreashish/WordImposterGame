@@ -24,7 +24,7 @@ export interface RoomSettings {
   votingTime: number;     // 20, 30, 60 seconds
   maxPlayers: number;     // 4 to 12
   imposterCount: number;  // 1 or 2
-  category: string;       // 'All', 'Animals', 'Food', 'Nature', 'Objects'
+  categories: string[];    // e.g. ['Animals', 'Food'] — empty array means All
 }
 
 export interface GameResult {

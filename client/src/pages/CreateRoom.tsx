@@ -4,7 +4,8 @@ import { useSocket } from '../contexts/SocketContext.js';
 import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
-import { ArrowLeft, Clock, Shield, Users, Sparkles, Sun, Moon } from 'lucide-react';
+import { CategoryDialog, ALL_CATEGORIES } from '../components/Common/CategoryDialog.js';
+import { ArrowLeft, Clock, Shield, Users, Sparkles, Sun, Moon, ChevronRight } from 'lucide-react';
 import { GameMode } from '../../../shared/types.js';
 
 const formatSeconds = (seconds: number): string => {
@@ -53,9 +54,15 @@ export const CreateRoom: React.FC = () => {
     const saved = localStorage.getItem('wi_settings_impostercount');
     return saved !== null ? Number(saved) : 1;
   });
-  const [category, setCategory] = useState<string>(() => {
-    return localStorage.getItem('wi_settings_category') || 'All';
+  const [category, setCategory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('wi_settings_categories');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
   });
+  const [showCategoryDialog, setShowCategoryDialog] = useState(false);
   const [errors, setErrors] = useState<{ nickname?: string }>({});
 
   useEffect(() => {
@@ -91,10 +98,14 @@ export const CreateRoom: React.FC = () => {
     trackEvent('change_impostercount_setting', { screen: 'CreateRoom', count: val });
   };
   const handleCategory = (val: string) => {
-    setCategory(val);
-    localStorage.setItem('wi_settings_category', val);
-    trackEvent('change_category_setting', { screen: 'CreateRoom', category: val });
+    setCategory(prev => {
+      const next = prev.includes(val) ? prev.filter(c => c !== val) : [...prev, val];
+      localStorage.setItem('wi_settings_categories', JSON.stringify(next));
+      trackEvent('change_category_setting', { screen: 'CreateRoom', categories: next });
+      return next;
+    });
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +120,7 @@ export const CreateRoom: React.FC = () => {
       votingTime,
       maxPlayers,
       imposterCount,
-      category
+      categories: category
     });
   };
 
@@ -245,42 +256,66 @@ export const CreateRoom: React.FC = () => {
               </div>
             </div>
 
-            {/* Imposters & Category */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
-                  <Shield size={14} className="text-slate-500" />
-                  Imposters
-                </span>
-                <select
-                  value={imposterCount}
-                  onChange={(e) => handleImposterCount(Number(e.target.value))}
-                  onPointerDown={blurActiveInput}
-                  className="glass-input px-3 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none w-full bg-slate-950 border border-slate-800 cursor-pointer"
-                >
-                  <option value={1} className="bg-slate-950">1 Imposter</option>
-                  <option value={2} className="bg-slate-950">2 Imposters</option>
-                </select>
-              </div>
+            {/* Imposters */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+                <Shield size={14} className="text-slate-500" />
+                Imposters
+              </span>
+              <select
+                value={imposterCount}
+                onChange={(e) => handleImposterCount(Number(e.target.value))}
+                onPointerDown={blurActiveInput}
+                className="glass-input px-3 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none w-full bg-slate-950 border border-slate-800 cursor-pointer"
+              >
+                <option value={1} className="bg-slate-950">1 Imposter</option>
+                <option value={2} className="bg-slate-950">2 Imposters</option>
+              </select>
+            </div>
 
-              <div className="flex flex-col gap-1.5">
+            {/* Category Picker */}
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
                   <Sparkles size={14} className="text-slate-500" />
-                  Category
+                  Categories
                 </span>
-                <select
-                  value={category}
-                  onChange={(e) => handleCategory(e.target.value)}
-                  onPointerDown={blurActiveInput}
-                  className="glass-input px-3 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none w-full bg-slate-950 border border-slate-800 cursor-pointer"
-                >
-                  <option value="All" className="bg-slate-950">All Categories</option>
-                  <option value="Animals" className="bg-slate-950">Animals</option>
-                  <option value="Food" className="bg-slate-950">Food & Drink</option>
-                  <option value="Nature" className="bg-slate-950">Nature</option>
-                  <option value="Objects" className="bg-slate-950">Objects</option>
-                </select>
+                <span className="text-xs text-slate-500">
+                  {category.length === 0 ? 'All active' : `${category.length} selected`}
+                </span>
               </div>
+
+              {/* Trigger button */}
+              <button
+                type="button"
+                onClick={() => setShowCategoryDialog(true)}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/70 transition-all cursor-pointer group"
+              >
+                <div className="flex flex-wrap gap-1.5 flex-1 mr-2">
+                  {category.length === 0 ? (
+                    <span className="text-sm text-slate-500">Tap to choose categories…</span>
+                  ) : (
+                    category.map(c => {
+                      const meta = ALL_CATEGORIES.find(a => a.label === c);
+                      return (
+                        <span
+                          key={c}
+                          className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+                          style={{
+                            background: `${meta?.accentColor ?? '#7c3aed'}22`,
+                            color: meta?.accentColor ?? '#a78bfa',
+                            border: `1px solid ${meta?.accentColor ?? '#7c3aed'}55`,
+                          }}
+                        >
+                          <span>{meta?.emoji}</span>
+                          <span>{c}</span>
+                        </span>
+                      );
+                    })
+                  )}
+                </div>
+                <ChevronRight size={16} className="text-slate-500 group-hover:text-slate-300 shrink-0 transition-colors" />
+              </button>
             </div>
 
             {/* Max Players */}
@@ -315,6 +350,15 @@ export const CreateRoom: React.FC = () => {
           </form>
         </Card>
       </div>
+
+      {/* Category dialog portal */}
+      {showCategoryDialog && (
+        <CategoryDialog
+          selected={category}
+          onToggle={handleCategory}
+          onClose={() => setShowCategoryDialog(false)}
+        />
+      )}
     </div>
   );
 };

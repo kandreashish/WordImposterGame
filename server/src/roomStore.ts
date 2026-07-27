@@ -345,10 +345,12 @@ export class RoomStore {
     const shuffledIds = [...activePlayerIds].sort(() => Math.random() - 0.5);
     const imposterIds = new Set(shuffledIds.slice(0, targetImposters));
 
-    // Pick random word pair filtered by category
+    // Pick random word pair filtered by categories (empty array = All)
     let filteredBank = wordBank;
-    if (room.settings.category && room.settings.category !== 'All') {
-      filteredBank = wordBank.filter(w => w.category.toLowerCase() === room.settings.category.toLowerCase());
+    const selectedCategories = room.settings.categories;
+    if (selectedCategories && selectedCategories.length > 0) {
+      const lowerSelected = selectedCategories.map(c => c.toLowerCase());
+      filteredBank = wordBank.filter(w => lowerSelected.includes(w.category.toLowerCase()));
     }
     if (filteredBank.length === 0) {
       filteredBank = wordBank;

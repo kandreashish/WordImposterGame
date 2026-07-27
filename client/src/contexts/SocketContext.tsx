@@ -51,7 +51,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
   // Theme Management
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+    // Read from localStorage (same key that index.html uses for flash-of-unstyled-content prevention)
+    const saved = localStorage.getItem('wi_theme');
+    return saved === 'light' ? 'light' : 'dark';
   });
 
   const toggleTheme = () => {
@@ -59,10 +61,10 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setTheme(nextTheme);
     if (nextTheme === 'light') {
       document.documentElement.classList.add('light');
-      localStorage.setItem('theme', 'light');
+      localStorage.setItem('wi_theme', 'light');
     } else {
       document.documentElement.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
+      localStorage.setItem('wi_theme', 'dark');
     }
     trackEvent('click_toggle_theme', { screen: room?.status || 'Home', theme: nextTheme });
   };

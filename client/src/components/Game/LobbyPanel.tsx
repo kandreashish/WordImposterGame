@@ -138,8 +138,12 @@ export const LobbyPanel: React.FC = () => {
                 <span className="font-bold text-slate-200">{room.settings.imposterCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Category:</span>
-                <span className="font-bold text-slate-200 capitalize">{room.settings.category}</span>
+                <span>Categories:</span>
+                <span className="font-bold text-slate-200 capitalize">
+                  {room.settings.categories && room.settings.categories.length > 0
+                    ? room.settings.categories.join(', ')
+                    : 'All'}
+                </span>
               </div>
             </div>
           </div>
