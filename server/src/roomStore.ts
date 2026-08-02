@@ -152,7 +152,8 @@ export class RoomStore {
       currentTurnIndex: 0,
       turnTimer: 0,
       imposterHint: null,
-      votedPlayerId: null
+      votedPlayerId: null,
+      usedWords: []
     };
     this.rooms.set(code, room);
     this.disconnectTimers.set(code, new Map());
@@ -421,6 +422,10 @@ export class RoomStore {
     const shuffledIds = [...activePlayerIds].sort(() => Math.random() - 0.5);
     const imposterIds = new Set(shuffledIds.slice(0, targetImposters));
 
+    if (!room.usedWords) {
+      room.usedWords = [];
+    }
+
     // Pick random word pair filtered by categories (empty array = All)
     let filteredBank = wordBank;
     const selectedCategories = room.settings.categories;
@@ -431,7 +436,19 @@ export class RoomStore {
     if (filteredBank.length === 0) {
       filteredBank = wordBank;
     }
-    const wordPair = filteredBank[Math.floor(Math.random() * filteredBank.length)];
+
+    // Filter out words that have already been played in this room
+    let availableBank = filteredBank.filter(w => !room.usedWords.includes(w.majority));
+    // If all words in the selected bank have been used, recycle the bank so the game never gets stuck
+    if (availableBank.length === 0) {
+      room.usedWords = room.usedWords.filter(w => !filteredBank.some(fb => fb.majority === w));
+      availableBank = filteredBank;
+    }
+
+    const wordPair = availableBank[Math.floor(Math.random() * availableBank.length)];
+    if (!room.usedWords.includes(wordPair.majority)) {
+      room.usedWords.push(wordPair.majority);
+    }
 
     room.majorityWord = wordPair.majority;
     if (room.settings.gameMode === 'classic') {

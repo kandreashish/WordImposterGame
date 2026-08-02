@@ -62,4 +62,5 @@ export interface Room {
   turnTimer: number;
   imposterHint: string | null;
   votedPlayerId: string | null;
+  usedWords: string[];
 }
