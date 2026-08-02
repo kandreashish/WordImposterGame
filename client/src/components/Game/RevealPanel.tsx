@@ -128,22 +128,10 @@ export const RevealPanel: React.FC = () => {
                   Majority
                 </h3>
 
-                <div className="mt-3 px-6 py-2 bg-emerald-950/20 border border-emerald-900/40 rounded-xl">
+                <div className="mt-4 px-6 py-2.5 bg-emerald-950/20 border border-emerald-900/40 rounded-xl">
                   <span className="text-4xs text-emerald-400 font-bold uppercase tracking-wider block">Your Secret Word</span>
                   <span className="text-2xl font-black text-emerald-100 tracking-tight mt-0.5 block">{word}</span>
                 </div>
-
-                {/* Show Hint as well */}
-                {room.imposterHint && (
-                  <div className="mt-3 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-xs flex flex-col items-center shadow-xs">
-                    <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest">
-                      Category Hint
-                    </span>
-                    <span className="text-xs font-black text-amber-200 mt-0.5">
-                      "{room.imposterHint}"
-                    </span>
-                  </div>
-                )}
               </Card>
             )}
           </div>
