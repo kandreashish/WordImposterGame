@@ -7,6 +7,16 @@ import { AvatarDisplay } from '../Common/AvatarKit.js';
 import { Eye, EyeOff, MessageSquareText, Sparkles, Send, Volume2, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { trackEvent } from '../../utils/analytics.js';
 
+const formatRelativeTime = (timestamp: number): string => {
+  const diffInSeconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+  if (diffInSeconds < 5) return 'just now';
+  if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  return `${diffInHours}h ago`;
+};
+
 export const DiscussionPanel: React.FC = () => {
   const { room, playerId, submitClue, doneSpeaking } = useSocket();
   const [showWord, setShowWord] = useState(false);
@@ -168,8 +178,8 @@ export const DiscussionPanel: React.FC = () => {
                           {roundLabel}
                         </span>
                       </div>
-                      <span className="text-5xs text-slate-600 font-bold">
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      <span className="text-5xs text-slate-500 font-bold font-mono">
+                        {formatRelativeTime(msg.timestamp)}
                       </span>
                     </div>
                     <span className="text-xs font-semibold text-slate-100 mt-1">"{msg.text}"</span>
