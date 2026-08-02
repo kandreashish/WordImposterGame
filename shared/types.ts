@@ -20,8 +20,9 @@ export interface Player {
 
 export interface RoomSettings {
   gameMode: GameMode;
-  discussionTime: number; // 30, 60, 90 seconds
-  votingTime: number;     // 20, 30, 60 seconds
+  discussionTime: number; // Clue turn time (15, 30, 45, 60, 90s)
+  revealTime: number;     // Secret word reveal time (5, 10, 15, 20, 30s)
+  votingTime: number;     // Voting time (10 to 120s)
   maxPlayers: number;     // 4 to 12
   imposterCount: number;  // 1 or 2
   categories: string[];    // e.g. ['Animals', 'Food'] — empty array means All

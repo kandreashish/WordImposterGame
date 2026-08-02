@@ -50,7 +50,7 @@ export const DiscussionPanel: React.FC = () => {
             </h2>
           </div>
         </div>
-        <Timer value={room.timer} total={30} />
+        <Timer value={room.timer} total={room.settings.discussionTime || 30} />
       </div>
 
       {/* Turn Indicator / Clue Input Box */}

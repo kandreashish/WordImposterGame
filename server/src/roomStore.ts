@@ -495,7 +495,7 @@ export class RoomStore {
     this.touchRoom(code);
 
     // Transition to Reveal phase
-    this.startPhase(code, 'REVEAL', 10); // 10s for reveal
+    this.startPhase(code, 'REVEAL', room.settings.revealTime || 10);
   }
 
   // Start a game phase with a timer
@@ -544,7 +544,7 @@ export class RoomStore {
       room.activePlayerId = room.turnOrder[0] || null;
       room.chat = [];
 
-      this.startPhase(code, 'DISCUSSION', 30); // 30 seconds for the first player's description
+      this.startPhase(code, 'DISCUSSION', room.settings.discussionTime || 30);
     } else if (room.status === 'DISCUSSION') {
       // Active player's turn timed out, advance to the next player
       this.advanceTurn(code);
@@ -568,8 +568,8 @@ export class RoomStore {
       this.startPhase(code, 'VOTING', room.settings.votingTime);
     } else {
       room.activePlayerId = room.turnOrder[room.currentTurnIndex];
-      // Reset timer to 30s for the next player
-      this.startPhase(code, 'DISCUSSION', 30);
+      // Reset timer to configured discussionTime for the next player
+      this.startPhase(code, 'DISCUSSION', room.settings.discussionTime || 30);
     }
   }
 
@@ -691,7 +691,7 @@ export class RoomStore {
     room.currentTurnIndex = 0;
     room.activePlayerId = room.turnOrder[0] || null;
 
-    this.startPhase(code, 'DISCUSSION', 30);
+    this.startPhase(code, 'DISCUSSION', room.settings.discussionTime || 30);
   }
 
   // Reveal Voted Player (commit elimination and end round)

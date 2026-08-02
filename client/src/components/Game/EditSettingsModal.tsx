@@ -23,7 +23,8 @@ export const EditSettingsModal: React.FC<EditSettingsModalProps> = ({ onClose })
 
   const currentSettings: RoomSettings = room?.settings || {
     gameMode: 'classic',
-    discussionTime: 60,
+    discussionTime: 30,
+    revealTime: 10,
     votingTime: 30,
     maxPlayers: 8,
     imposterCount: 1,
@@ -31,8 +32,9 @@ export const EditSettingsModal: React.FC<EditSettingsModalProps> = ({ onClose })
   };
 
   const [gameMode, setGameMode] = useState<GameMode>(currentSettings.gameMode);
-  const [discussionTime, setDiscussionTime] = useState<number>(currentSettings.discussionTime);
-  const [votingTime, setVotingTime] = useState<number>(currentSettings.votingTime);
+  const [discussionTime, setDiscussionTime] = useState<number>(currentSettings.discussionTime || 30);
+  const [revealTime, setRevealTime] = useState<number>(currentSettings.revealTime || 10);
+  const [votingTime, setVotingTime] = useState<number>(currentSettings.votingTime || 30);
   const [maxPlayers, setMaxPlayers] = useState<number>(currentSettings.maxPlayers || 8);
   const [imposterCount, setImposterCount] = useState<number>(currentSettings.imposterCount || 1);
   const [categories, setCategories] = useState<string[]>(
@@ -57,6 +59,7 @@ export const EditSettingsModal: React.FC<EditSettingsModalProps> = ({ onClose })
     updateSettings({
       gameMode,
       discussionTime,
+      revealTime,
       votingTime,
       maxPlayers,
       imposterCount,
@@ -130,23 +133,42 @@ export const EditSettingsModal: React.FC<EditSettingsModalProps> = ({ onClose })
             </div>
           </div>
 
-          {/* Discussion & Voting Time */}
+          {/* Discussion, Reveal & Voting Time */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center text-xs font-semibold text-slate-400 tracking-wider uppercase">
                 <span className="flex items-center gap-1.5">
                   <Clock size={14} className="text-slate-500" />
-                  Discussion Time
+                  Clue Turn Time (Per Player)
                 </span>
                 <span className="text-violet-400 font-bold">{formatSeconds(discussionTime)}</span>
               </div>
               <input
                 type="range"
-                min={0}
-                max={300}
+                min={5}
+                max={180}
                 step={5}
                 value={discussionTime}
                 onChange={(e) => setDiscussionTime(Number(e.target.value))}
+                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400 tracking-wider uppercase">
+                <span className="flex items-center gap-1.5">
+                  <Clock size={14} className="text-slate-500" />
+                  Secret Word Reveal Time
+                </span>
+                <span className="text-violet-400 font-bold">{formatSeconds(revealTime)}</span>
+              </div>
+              <input
+                type="range"
+                min={5}
+                max={60}
+                step={5}
+                value={revealTime}
+                onChange={(e) => setRevealTime(Number(e.target.value))}
                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
               />
             </div>

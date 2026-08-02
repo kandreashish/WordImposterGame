@@ -29,7 +29,7 @@ export const RevealPanel: React.FC = () => {
             Reveal Secret Word
           </h2>
         </div>
-        <Timer value={room.timer} total={10} />
+        <Timer value={room.timer} total={room.settings.revealTime || 10} />
       </div>
 
       <div 

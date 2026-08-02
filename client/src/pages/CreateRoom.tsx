@@ -40,7 +40,11 @@ export const CreateRoom: React.FC = () => {
   });
   const [discussionTime, setDiscussionTime] = useState<number>(() => {
     const saved = localStorage.getItem('wi_settings_discussion');
-    return saved !== null ? Number(saved) : 60;
+    return saved !== null ? Number(saved) : 30;
+  });
+  const [revealTime, setRevealTime] = useState<number>(() => {
+    const saved = localStorage.getItem('wi_settings_reveal');
+    return saved !== null ? Number(saved) : 10;
   });
   const [votingTime, setVotingTime] = useState<number>(() => {
     const saved = localStorage.getItem('wi_settings_voting');
@@ -84,6 +88,11 @@ export const CreateRoom: React.FC = () => {
     localStorage.setItem('wi_settings_discussion', String(val));
     trackEvent('change_discussion_timer_setting', { screen: 'CreateRoom', seconds: val });
   };
+  const handleRevealTime = (val: number) => {
+    setRevealTime(val);
+    localStorage.setItem('wi_settings_reveal', String(val));
+    trackEvent('change_reveal_timer_setting', { screen: 'CreateRoom', seconds: val });
+  };
   const handleVotingTime = (val: number) => {
     setVotingTime(val);
     localStorage.setItem('wi_settings_voting', String(val));
@@ -121,6 +130,7 @@ export const CreateRoom: React.FC = () => {
     createRoom(nickname.trim(), {
       gameMode,
       discussionTime,
+      revealTime,
       votingTime,
       maxPlayers,
       imposterCount,
@@ -207,20 +217,20 @@ export const CreateRoom: React.FC = () => {
               </div>
             </div>
 
-            {/* Discussion & Voting Sliders */}
+            {/* Discussion, Reveal & Voting Sliders */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center text-xs font-semibold text-slate-400 tracking-wider uppercase">
                   <span className="flex items-center gap-1.5">
                     <Clock size={14} className="text-slate-500" />
-                    Discussion Time
+                    Clue Turn Time (Per Player)
                   </span>
                   <span className="text-violet-400 font-bold">{formatSeconds(discussionTime)}</span>
                 </div>
                 <input
                   type="range"
-                  min={0}
-                  max={300}
+                  min={5}
+                  max={180}
                   step={5}
                   value={discussionTime}
                   onChange={(e) => handleDiscussionTime(Number(e.target.value))}
@@ -228,9 +238,34 @@ export const CreateRoom: React.FC = () => {
                   className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
                 />
                 <div className="flex justify-between text-4xs text-slate-500 px-1">
-                  <span>0s (Direct)</span>
-                  <span>2m 30s</span>
-                  <span>5m</span>
+                  <span>5s</span>
+                  <span>45s</span>
+                  <span>3m</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center text-xs font-semibold text-slate-400 tracking-wider uppercase">
+                  <span className="flex items-center gap-1.5">
+                    <Clock size={14} className="text-slate-500" />
+                    Secret Word Reveal Time
+                  </span>
+                  <span className="text-violet-400 font-bold">{formatSeconds(revealTime)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={5}
+                  max={60}
+                  step={5}
+                  value={revealTime}
+                  onChange={(e) => handleRevealTime(Number(e.target.value))}
+                  onPointerDown={blurActiveInput}
+                  className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-600"
+                />
+                <div className="flex justify-between text-4xs text-slate-500 px-1">
+                  <span>5s</span>
+                  <span>30s</span>
+                  <span>60s</span>
                 </div>
               </div>
 
