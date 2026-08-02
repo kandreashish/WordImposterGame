@@ -93,14 +93,24 @@ export const ResultsPanel: React.FC = () => {
         <h2 className="text-4xl font-black uppercase tracking-tight">
           {winnerRole} Victory!
         </h2>
-        <p className="text-slate-300 text-xs font-semibold tracking-wide mt-2 max-w-sm mx-auto leading-normal">
+        <p className="text-slate-300 text-xs font-semibold tracking-wide mt-2 max-w-md mx-auto leading-relaxed">
           {eliminatedPlayerNickname ? (
             <>
-              Player <span className="font-extrabold text-white underline decoration-rose-500">{eliminatedPlayerNickname}</span> was voted out. 
-              {wasImposterVotedOut ? ' They were the Imposter!' : ' They were innocent.'}
+              Player <span className="font-extrabold text-white underline decoration-rose-500">{eliminatedPlayerNickname}</span> was voted out.
+              {wasImposterVotedOut ? (
+                <span className="text-rose-400 font-extrabold block mt-1.5 text-sm">
+                  🔥 They WERE the Imposter! {imposterWord ? `(Word: "${imposterWord}")` : '(No Word)'}
+                </span>
+              ) : (
+                <span className="text-emerald-400 font-extrabold block mt-1.5 text-sm">
+                  😇 They were INNOCENT! (Word: "{majorityWord}")
+                </span>
+              )}
             </>
           ) : (
-            'No one was voted out this round due to a tie.'
+            <span className="text-amber-400 font-extrabold block mt-1.5 text-sm">
+              ⚖️ No one was voted out this round due to a tie.
+            </span>
           )}
         </p>
       </Card>

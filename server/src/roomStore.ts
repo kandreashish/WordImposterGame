@@ -760,13 +760,16 @@ export class RoomStore {
     let eliminatedPlayer: Player | null = null;
     let wasImposterVotedOut = false;
 
-    // In case of a tie or no votes at all, no one gets eliminated or pick randomly?
-    // Let's say: if there is a tie, no one is eliminated (round ends in failure for majority, or imposter wins)
-    // To make it fun: if there is a tie, no one is eliminated.
-    if (candidatesToEliminate.length === 1 && maxVotes > 0) {
+    // Use room.votedPlayerId if available, else find single candidate with max votes
+    if (room.votedPlayerId) {
+      eliminatedPlayer = room.players.find(p => p.id === room.votedPlayerId) || null;
+    } else if (candidatesToEliminate.length === 1 && maxVotes > 0) {
       eliminatedPlayer = candidatesToEliminate[0];
+    }
+
+    if (eliminatedPlayer) {
       eliminatedPlayer.isAlive = false;
-      if (eliminatedPlayer.isImposter) {
+      if (eliminatedPlayer.isImposter || eliminatedPlayer.role === 'IMPOSTER') {
         wasImposterVotedOut = true;
       }
     }
