@@ -54,6 +54,7 @@ export class RoomStore {
   private gameIntervals = new Map<string, NodeJS.Timeout>();
   private disconnectTimers = new Map<string, Map<string, NodeJS.Timeout>>(); // roomCode -> (playerId -> Timeout)
   private dataFilePath: string;
+  private totalGamesPlayed: number = 0;
 
   constructor(
     private onStateUpdate: (code: string, room: Room) => void,
@@ -67,6 +68,15 @@ export class RoomStore {
     this.loadFromDisk();
   }
 
+  public getTotalGamesPlayed(): number {
+    return this.totalGamesPlayed;
+  }
+
+  public incrementTotalGamesPlayed() {
+    this.totalGamesPlayed++;
+    this.saveToDisk();
+  }
+
   // Save room store state to disk
   private saveToDisk() {
     try {
@@ -75,7 +85,11 @@ export class RoomStore {
         // Mark players as disconnected on disk reboot so they reconnect cleanly
         players: r.players.map(p => ({ ...p, isConnected: false, socketId: null }))
       }));
-      fs.writeFileSync(this.dataFilePath, JSON.stringify(serializableRooms, null, 2));
+      const payload = {
+        totalGamesPlayed: this.totalGamesPlayed,
+        rooms: serializableRooms
+      };
+      fs.writeFileSync(this.dataFilePath, JSON.stringify(payload, null, 2));
     } catch (err) {
       console.error('Failed to save rooms to disk:', err);
     }
@@ -86,7 +100,14 @@ export class RoomStore {
     try {
       if (fs.existsSync(this.dataFilePath)) {
         const raw = fs.readFileSync(this.dataFilePath, 'utf8');
-        const loaded: Room[] = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        let loaded: Room[] = [];
+        if (Array.isArray(parsed)) {
+          loaded = parsed;
+        } else if (parsed && typeof parsed === 'object') {
+          this.totalGamesPlayed = parsed.totalGamesPlayed || 0;
+          loaded = parsed.rooms || [];
+        }
         for (const room of loaded) {
           // Reset runtime variables
           room.players.forEach(p => { p.isConnected = false; p.socketId = null; });
@@ -94,20 +115,20 @@ export class RoomStore {
           this.disconnectTimers.set(room.code, new Map());
           this.touchRoom(room.code);
         }
-        console.log(`Restored ${loaded.length} room(s) from persistent disk storage.`);
+        console.log(`Restored ${loaded.length} room(s) and totalGamesPlayed=${this.totalGamesPlayed} from persistent disk storage.`);
       }
     } catch (err) {
       console.error('Failed to load rooms from disk:', err);
     }
   }
 
-  // Generate 6-digit code
+  // Generate 4-digit code
   private generateRoomCode(): string {
     const chars = '0123456789';
     let code = '';
     do {
       code = '';
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 4; i++) {
         code += chars.charAt(Math.floor(Math.random() * chars.length));
       }
     } while (this.rooms.has(code));
@@ -485,6 +506,7 @@ export class RoomStore {
 
     room.roundResults = null;
     room.roundCount++;
+    this.incrementTotalGamesPlayed();
     room.chat = [];
     room.imposterHint = wordPair.hint;
     room.turnOrder = [];

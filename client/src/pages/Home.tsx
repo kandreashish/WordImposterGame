@@ -33,6 +33,10 @@ export const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'rules' | 'tips'>('overview');
   const [soundEffect, setSoundEffect] = useState(() => isSoundEnabled());
   const [sillySecretCount, setSillySecretCount] = useState(0);
+  const [totalGamesPlayed, setTotalGamesPlayed] = useState<number>(() => {
+    const saved = localStorage.getItem('wi_total_games_played');
+    return saved ? Number(saved) : 0;
+  });
 
   const toggleSound = () => {
     const next = !soundEffect;
@@ -44,6 +48,17 @@ export const Home: React.FC = () => {
 
   React.useEffect(() => {
     trackEvent('enter_screen_home', { screen: 'Home' });
+
+    // Fetch live games played counter from API
+    fetch('/wordgame/api/stats')
+      .then(res => res.json())
+      .then(data => {
+        if (typeof data.totalGamesPlayed === 'number') {
+          setTotalGamesPlayed(data.totalGamesPlayed);
+          localStorage.setItem('wi_total_games_played', String(data.totalGamesPlayed));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   React.useEffect(() => {
@@ -109,11 +124,17 @@ export const Home: React.FC = () => {
 
       {/* Top Bar Controls */}
       <div className="w-full max-w-4xl flex items-center justify-between mb-4 z-20">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="badge-you text-xs px-3 py-1 rounded-full flex items-center gap-1.5 font-bold tracking-wider">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             LIVE PARTY GAME
           </span>
+          {totalGamesPlayed > 0 && (
+            <span className="text-2xs font-extrabold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-xs">
+              <Flame size={12} className="text-amber-400 animate-pulse" />
+              {totalGamesPlayed} Games Played
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -183,18 +204,22 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Feature Quick Badges */}
-          <div className="grid grid-cols-3 gap-2 w-full max-w-md pt-4 border-t border-slate-800/80 text-center">
-            <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">
-              <span className="text-xs text-slate-400 font-semibold">Group Size</span>
-              <span className="text-sm font-extrabold text-violet-400">3 - 20 Players</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-lg pt-4 border-t border-slate-800/80 text-center">
+            <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-violet-950/20 border border-violet-500/20 shadow-xs">
+              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Games Played</span>
+              <span className="text-sm sm:text-base font-black text-violet-400 font-mono">{totalGamesPlayed}</span>
             </div>
-            <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">
-              <span className="text-xs text-slate-400 font-semibold">Setup Time</span>
-              <span className="text-sm font-extrabold text-amber-400">Instant / 0s</span>
+            <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50">
+              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Group Size</span>
+              <span className="text-sm sm:text-base font-extrabold text-indigo-400">3-12 Players</span>
             </div>
-            <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-900/40 border border-slate-800/50">
-              <span className="text-xs text-slate-400 font-semibold">Cost</span>
-              <span className="text-sm font-extrabold text-emerald-400">100% Free</span>
+            <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50">
+              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Setup Time</span>
+              <span className="text-sm sm:text-base font-extrabold text-amber-400">Instant</span>
+            </div>
+            <div className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-slate-900/40 border border-slate-800/50">
+              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Cost</span>
+              <span className="text-sm sm:text-base font-extrabold text-emerald-400">100% Free</span>
             </div>
           </div>
         </Card>

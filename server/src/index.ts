@@ -70,7 +70,7 @@ io.on('connection', (socket) => {
       if (!nickname || nickname.trim() === '') {
         return socket.emit('game-error', 'Nickname is required');
       }
-      if (!roomCode || roomCode.length !== 6) {
+      if (!roomCode || roomCode.length !== 4) {
         return socket.emit('game-error', 'Invalid Room Code format');
       }
 
@@ -269,6 +269,11 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Get Stats
+  socket.on('get-stats', () => {
+    socket.emit('stats-update', { totalGamesPlayed: store.getTotalGamesPlayed() });
+  });
+
   // 10. Disconnect
   socket.on('disconnect', () => {
     const { playerId, roomCode } = socket.data;
@@ -277,6 +282,11 @@ io.on('connection', (socket) => {
       store.disconnectPlayer(roomCode, playerId, socket.id);
     }
   });
+});
+
+// REST API for stats
+app.get('/wordgame/api/stats', (req, res) => {
+  res.json({ totalGamesPlayed: store.getTotalGamesPlayed() });
 });
 
 // Serve Client static build files in Production

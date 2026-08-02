@@ -35,8 +35,8 @@ export const JoinRoom: React.FC = () => {
     if (!nickname || nickname.trim() === '') {
       newErrors.nickname = 'Nickname is required';
     }
-    if (!roomCode || roomCode.trim().length !== 6) {
-      newErrors.roomCode = 'Room Code must be 6 digits';
+    if (!roomCode || roomCode.trim().length !== 4) {
+      newErrors.roomCode = 'Room Code must be 4 digits';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -90,8 +90,8 @@ export const JoinRoom: React.FC = () => {
 
             {/* Room Code */}
             <Input
-              label="6-Digit Room Code"
-              placeholder="e.g. 847291"
+              label="4-Digit Room Code"
+              placeholder="e.g. 8472"
               value={roomCode}
               onChange={(e) => {
                 // Enforce digits only
@@ -100,7 +100,7 @@ export const JoinRoom: React.FC = () => {
                 if (errors.roomCode) setErrors({ ...errors, roomCode: undefined });
               }}
               error={errors.roomCode}
-              maxLength={6}
+              maxLength={4}
               className="text-center tracking-widest text-lg font-bold"
             />
 

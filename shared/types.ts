@@ -47,7 +47,7 @@ export interface ChatMessage {
 }
 
 export interface Room {
-  code: string;           // 6-digit room code
+  code: string;           // 4-digit room code
   settings: RoomSettings;
   players: Player[];
   status: GameStatus;
