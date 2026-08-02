@@ -164,44 +164,78 @@ export const ResultsPanel: React.FC = () => {
           </span>
         </div>
 
-        <div className="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2 max-h-[260px] overflow-y-auto pr-1">
           {scoreboard.map((player, idx) => {
             const isSelf = player.id === playerId;
             const isLeader = idx === 0 && player.score > 0;
+            const playerClues = (room.chat || []).filter(c => c.playerId === player.id);
 
             return (
               <div
                 key={player.id}
-                className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
+                className={`flex flex-col gap-2 p-3 rounded-2xl border transition-all ${
                   isSelf
                     ? 'bg-violet-50/90 dark:bg-violet-600/10 border-2 border-violet-500 shadow-xs'
                     : 'bg-slate-50/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800/80'
                 }`}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="text-xs font-black text-slate-500 w-5 text-center">
-                    #{idx + 1}
-                  </div>
-                  <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-bold theme-text-primary truncate flex items-center gap-1.5">
-                      {player.nickname}
-                      {isLeader && <Crown size={12} className="text-amber-500 dark:text-amber-400 flex-shrink-0" />}
-                      {isSelf && (
-                        <span className="text-5xs bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 px-1.5 py-0.5 rounded uppercase font-extrabold tracking-wider">
-                          You
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="text-xs font-black text-slate-500 w-5 text-center">
+                      #{idx + 1}
+                    </div>
+                    <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
+                      <AvatarDisplay avatarId={player.avatar || 'fox'} size={28} />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-sm font-bold theme-text-primary truncate flex items-center gap-1.5">
+                        {player.nickname}
+                        {isLeader && <Crown size={12} className="text-amber-500 dark:text-amber-400 flex-shrink-0" />}
+                        {isSelf && (
+                          <span className="text-5xs bg-violet-100 dark:bg-violet-500/20 text-violet-700 dark:text-violet-400 px-1.5 py-0.5 rounded uppercase font-extrabold tracking-wider">
+                            You
+                          </span>
+                        )}
+                        <span className={`text-5xs font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                          player.role === 'IMPOSTER'
+                            ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30'
+                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                        }`}>
+                          {player.role}
                         </span>
-                      )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-right flex items-center gap-3">
+                    <span className="text-xs font-black text-violet-600 dark:text-violet-400 font-mono">
+                      {player.score} pts
                     </span>
                   </div>
                 </div>
 
-                <div className="text-right flex items-center gap-3">
-                  <span className="text-xs font-black text-violet-600 dark:text-violet-400 font-mono">
-                    {player.score} pts
+                {/* Spoken words by player */}
+                <div className="flex items-center gap-1.5 flex-wrap pt-1 border-t border-slate-200/60 dark:border-slate-800/60 pl-8">
+                  <span className="text-4xs font-extrabold text-slate-500 uppercase tracking-wider flex-shrink-0">
+                    Spoken Clues:
                   </span>
+                  {playerClues.length > 0 ? (
+                    playerClues.map((c, cIdx) => {
+                      const rNum = c.roundNumber || (cIdx + 1);
+                      const rLabel = rNum === 1 ? 'R1' : rNum === 2 ? 'R2' : `R${rNum}`;
+                      return (
+                        <span
+                          key={cIdx}
+                          className="inline-flex items-center gap-1 text-xs font-bold bg-slate-900/60 dark:bg-slate-950/70 text-slate-200 dark:text-slate-100 border border-slate-700/60 px-2 py-0.5 rounded-md italic shadow-2xs"
+                        >
+                          <span className="text-5xs font-extrabold text-violet-400 not-italic uppercase">{rLabel}:</span>
+                          "{c.text}"
+                        </span>
+                      );
+                    })
+                  ) : (
+                    <span className="text-5xs text-slate-500 italic">No clues spoken</span>
+                  )}
                 </div>
               </div>
             );
@@ -222,41 +256,56 @@ export const ResultsPanel: React.FC = () => {
           {room.players.map((player) => {
             const voters = room.players.filter(p => p.voteTargetId === player.id);
             const isImposter = player.role === 'IMPOSTER';
+            const playerClues = (room.chat || []).filter(c => c.playerId === player.id);
             
             return (
-              <div key={player.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-xs">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
-                    <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
+              <div key={player.id} className="flex flex-col gap-2 p-3 rounded-xl bg-slate-50/90 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-700">
+                      <AvatarDisplay avatarId={player.avatar || 'fox'} size={32} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-bold theme-text-primary">{player.nickname}</span>
+                      <span className={`text-5xs font-black uppercase tracking-wider leading-none mt-0.5 px-1.5 py-0.5 rounded w-fit ${
+                        isImposter 
+                          ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30' 
+                          : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                      }`}>
+                        {player.role}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs sm:text-sm font-bold theme-text-primary">{player.nickname}</span>
-                    <span className={`text-5xs font-black uppercase tracking-wider leading-none mt-0.5 px-1.5 py-0.5 rounded w-fit ${
-                      isImposter 
-                        ? 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30' 
-                        : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
-                    }`}>
-                      {player.role}
-                    </span>
+
+                  <div className="flex items-center gap-1.5">
+                    {voters.length > 0 ? (
+                      <>
+                        <span className="text-4xs font-bold theme-text-secondary uppercase tracking-wider mr-1">Voted by:</span>
+                        <div className="flex -space-x-1">
+                          {voters.map((voter) => (
+                              <div key={voter.id} className="w-6 h-6 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-xs hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
+                                <AvatarDisplay avatarId={voter.avatar || 'fox'} size={24} />
+                              </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 italic">No votes</span>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  {voters.length > 0 ? (
-                    <>
-                      <span className="text-4xs font-bold theme-text-secondary uppercase tracking-wider mr-1">Voted by:</span>
-                      <div className="flex -space-x-1">
-                        {voters.map((voter) => (
-                            <div className="w-6 h-6 rounded-full overflow-hidden border-2 border-white dark:border-slate-800 shadow-xs hover:-translate-y-0.5 transition-transform cursor-help" title={`${voter.nickname} voted for ${player.nickname}`}>
-                              <AvatarDisplay avatarId={voter.avatar || 'fox'} size={24} />
-                            </div>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 italic">No votes</span>
-                  )}
-                </div>
+                {/* Spoken words in breakdown */}
+                {playerClues.length > 0 && (
+                  <div className="flex items-center gap-1 flex-wrap pt-1 border-t border-slate-200/40 dark:border-slate-800/50 text-2xs">
+                    <span className="text-5xs font-bold text-slate-500 uppercase">Words:</span>
+                    {playerClues.map((c, cIdx) => (
+                      <span key={cIdx} className="text-5xs font-bold bg-violet-500/10 text-violet-300 border border-violet-500/20 px-1.5 py-0.5 rounded italic">
+                        "{c.text}"
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
