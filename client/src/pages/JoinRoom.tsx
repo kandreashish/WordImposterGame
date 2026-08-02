@@ -78,7 +78,7 @@ export const JoinRoom: React.FC = () => {
             {/* Nickname Input */}
             <Input
               label="Your Nickname"
-              placeholder="e.g. Maverick"
+              placeholder="e.g. Rahul / Ananya"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);

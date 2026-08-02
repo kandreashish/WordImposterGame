@@ -169,7 +169,7 @@ export const CreateRoom: React.FC = () => {
             {/* Nickname Input */}
             <Input
               label="Choose Nickname"
-              placeholder="e.g. Maverick"
+              placeholder="e.g. Rahul / Ananya"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
