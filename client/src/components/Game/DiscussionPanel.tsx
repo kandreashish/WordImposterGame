@@ -152,10 +152,18 @@ export const DiscussionPanel: React.FC = () => {
 
       {/* Clues Chat History Log */}
       <Card className="p-4 border-slate-800 bg-slate-950/40 flex flex-col gap-3">
-        <h3 className="text-2xs font-extrabold text-slate-400 tracking-wider uppercase border-b border-slate-800 pb-2 flex items-center gap-1.5">
-          <MessageSquareText size={12} className="text-slate-500" />
-          Submitted Clues Log
-        </h3>
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h3 className="text-2xs font-extrabold text-slate-400 tracking-wider uppercase flex items-center gap-1.5">
+            <MessageSquareText size={12} className="text-slate-500" />
+            Submitted Clues Log
+          </h3>
+          {activePlayer && (
+            <span className="text-3xs font-extrabold text-violet-400 bg-violet-500/15 border border-violet-500/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 animate-pulse">
+              <Volume2 size={10} className="animate-bounce text-violet-400" />
+              {isActiveSelf ? 'Your Turn to Speak' : `${activePlayer.nickname} is speaking...`}
+            </span>
+          )}
+        </div>
         <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1">
           {room.chat && room.chat.length > 0 ? (
             room.chat.map((msg, idx) => {
@@ -210,15 +218,18 @@ export const DiscussionPanel: React.FC = () => {
                 !player.isConnected
                   ? 'bg-red-950/10 border-red-500/20 opacity-60'
                   : isSpeaking
-                  ? 'bg-violet-600/10 border-violet-500 shadow-md shadow-violet-500/10 scale-102 ring-1 ring-violet-500/20'
+                  ? 'bg-violet-600/10 border-violet-500 shadow-lg shadow-violet-500/15 scale-102 ring-2 ring-violet-500/40'
                   : isSelf
                   ? 'bg-violet-600/5 border-violet-500/30'
                   : 'bg-slate-900/40 border-slate-800/80'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-700/60">
+                <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 border border-slate-700/60 relative">
                   <AvatarDisplay avatarId={player.avatar || 'fox'} size={36} />
+                  {isSpeaking && (
+                    <div className="absolute inset-0 border-2 border-violet-400 rounded-full animate-ping pointer-events-none" />
+                  )}
                 </div>
                 <div className="min-w-0 flex flex-col flex-1">
                   <span className="text-xs font-bold text-slate-200 truncate flex items-center gap-1">
@@ -233,7 +244,10 @@ export const DiscussionPanel: React.FC = () => {
                     {!player.isConnected ? (
                       <span className="text-red-400">Offline</span>
                     ) : isSpeaking ? (
-                      <span className="text-violet-400 animate-pulse">Speaking...</span>
+                      <span className="text-violet-400 font-extrabold flex items-center gap-1 animate-pulse">
+                        <Volume2 size={10} className="animate-bounce" />
+                        SPEAKING NOW...
+                      </span>
                     ) : (
                       <span className="text-slate-500 flex items-center gap-0.5"><CheckCircle2 size={8} /> Ready</span>
                     )}
@@ -241,24 +255,35 @@ export const DiscussionPanel: React.FC = () => {
                 </div>
               </div>
 
-              {/* Player's submitted clues by round (1st Round Word, 2nd Round Word...) */}
+              {/* Player's submitted clues by round */}
               <div className="flex flex-col gap-1 pt-1.5 border-t border-slate-800/60">
-                {playerClues.length > 0 ? (
-                  playerClues.map((c, cIdx) => {
-                    const rNum = c.roundNumber || (cIdx + 1);
-                    const rTag = rNum === 1 ? '1st Round' : rNum === 2 ? '2nd Round' : rNum === 3 ? '3rd Round' : `${rNum}th Round`;
-                    return (
-                      <div key={cIdx} className="flex items-center justify-between text-xs px-2 py-1 rounded-lg bg-slate-950/60 border border-slate-800/80">
-                        <span className="text-4xs font-extrabold text-violet-400 uppercase tracking-wider">
-                          {rTag} Word:
-                        </span>
-                        <span className="font-bold text-slate-100 italic">"{c.text}"</span>
-                      </div>
-                    );
-                  })
-                ) : (
+                {playerClues.map((c, cIdx) => {
+                  const rNum = c.roundNumber || (cIdx + 1);
+                  const rTag = rNum === 1 ? '1st Round' : rNum === 2 ? '2nd Round' : rNum === 3 ? '3rd Round' : `${rNum}th Round`;
+                  return (
+                    <div key={cIdx} className="flex items-center justify-between text-xs px-2 py-1 rounded-lg bg-slate-950/60 border border-slate-800/80">
+                      <span className="text-4xs font-extrabold text-violet-400 uppercase tracking-wider">
+                        {rTag} Word:
+                      </span>
+                      <span className="font-bold text-slate-100 italic">"{c.text}"</span>
+                    </div>
+                  );
+                })}
+
+                {/* Show active speaking slot if currently speaking */}
+                {isSpeaking && (
+                  <div className="flex items-center justify-between text-xs px-2 py-1 rounded-lg bg-violet-600/15 border border-violet-500/40 animate-pulse text-violet-300">
+                    <span className="text-4xs font-extrabold uppercase tracking-wider flex items-center gap-1">
+                      <Volume2 size={10} className="animate-bounce text-violet-400" />
+                      Speaking Now...
+                    </span>
+                    <span className="text-[9px] font-black uppercase text-violet-400">Current Turn</span>
+                  </div>
+                )}
+
+                {playerClues.length === 0 && !isSpeaking && (
                   <span className="text-5xs text-slate-500 italic font-medium px-1">
-                    No word prompt submitted yet
+                    Waiting for turn...
                   </span>
                 )}
               </div>
