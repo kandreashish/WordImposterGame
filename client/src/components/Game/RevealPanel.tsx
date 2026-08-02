@@ -71,22 +71,22 @@ export const RevealPanel: React.FC = () => {
           <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
             {isImposter ? (
               <Card 
-                className="w-full h-full justify-center items-center border-rose-500/30 text-center relative"
+                className="w-full h-full justify-center items-center border-rose-500/30 text-center relative p-5"
                 glow="imposter"
               >
                 <div className="absolute inset-4 border border-dashed border-rose-950/40 rounded-2xl pointer-events-none" />
 
-                <div className="p-4 bg-rose-600/10 text-rose-400 rounded-full mb-4">
-                  <ShieldAlert size={36} className="animate-pulse" />
+                <div className="p-3 bg-rose-600/10 text-rose-400 rounded-full mb-3">
+                  <ShieldAlert size={32} className="animate-pulse" />
                 </div>
-                <span className="text-2xs font-extrabold text-rose-400 uppercase tracking-widest mb-1">
+                <span className="text-2xs font-extrabold text-rose-400 uppercase tracking-widest mb-0.5">
                   You are the
                 </span>
                 <h3 className="text-3xl font-black text-rose-500 uppercase tracking-wide">
                   Imposter
                 </h3>
                 
-                <div className="mt-4 px-4 py-2 bg-rose-950/20 border border-rose-900/40 rounded-xl max-w-xs">
+                <div className="mt-3 px-4 py-2 bg-rose-950/20 border border-rose-900/40 rounded-xl max-w-xs">
                   {room.settings.gameMode === 'classic' ? (
                     <span className="text-xs font-bold text-rose-300">
                       You have NO word. Blend in!
@@ -98,28 +98,52 @@ export const RevealPanel: React.FC = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Show Hint as well */}
+                {room.imposterHint && (
+                  <div className="mt-3 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-xs flex flex-col items-center shadow-xs">
+                    <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest">
+                      Category Hint
+                    </span>
+                    <span className="text-xs font-black text-amber-200 mt-0.5">
+                      "{room.imposterHint}"
+                    </span>
+                  </div>
+                )}
               </Card>
             ) : (
               <Card 
-                className="w-full h-full justify-center items-center border-emerald-500/30 text-center relative"
+                className="w-full h-full justify-center items-center border-emerald-500/30 text-center relative p-5"
                 glow="majority"
               >
                 <div className="absolute inset-4 border border-dashed border-emerald-950/40 rounded-2xl pointer-events-none" />
 
-                <div className="p-4 bg-emerald-600/10 text-emerald-400 rounded-full mb-4">
-                  <EyeOff size={36} />
+                <div className="p-3 bg-emerald-600/10 text-emerald-400 rounded-full mb-3">
+                  <EyeOff size={32} />
                 </div>
-                <span className="text-2xs font-extrabold text-emerald-400 uppercase tracking-widest mb-1">
+                <span className="text-2xs font-extrabold text-emerald-400 uppercase tracking-widest mb-0.5">
                   You are part of the
                 </span>
                 <h3 className="text-3xl font-black text-emerald-500 uppercase tracking-wide">
                   Majority
                 </h3>
 
-                <div className="mt-4 px-6 py-2.5 bg-emerald-950/20 border border-emerald-900/40 rounded-xl">
+                <div className="mt-3 px-6 py-2 bg-emerald-950/20 border border-emerald-900/40 rounded-xl">
                   <span className="text-4xs text-emerald-400 font-bold uppercase tracking-wider block">Your Secret Word</span>
                   <span className="text-2xl font-black text-emerald-100 tracking-tight mt-0.5 block">{word}</span>
                 </div>
+
+                {/* Show Hint as well */}
+                {room.imposterHint && (
+                  <div className="mt-3 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-xs flex flex-col items-center shadow-xs">
+                    <span className="text-[9px] font-extrabold text-amber-400 uppercase tracking-widest">
+                      Category Hint
+                    </span>
+                    <span className="text-xs font-black text-amber-200 mt-0.5">
+                      "{room.imposterHint}"
+                    </span>
+                  </div>
+                )}
               </Card>
             )}
           </div>

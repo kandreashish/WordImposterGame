@@ -378,6 +378,27 @@ export class RoomStore {
     this.onStateUpdate(code, room);
   }
 
+  // Update Room Settings (Host Only)
+  public updateSettings(code: string, hostPlayerId: string, settings: Partial<RoomSettings>) {
+    const room = this.rooms.get(code);
+    if (!room) return;
+
+    const host = room.players.find(p => p.id === hostPlayerId);
+    if (!host || !host.isHost) throw new Error('Only the host can update room settings');
+
+    if (room.status !== 'LOBBY' && room.status !== 'RESULTS') {
+      throw new Error('Settings can only be changed in the lobby or results screen');
+    }
+
+    room.settings = {
+      ...room.settings,
+      ...settings,
+    };
+
+    this.touchRoom(code);
+    this.onStateUpdate(code, room);
+  }
+
   // Start game
   public startGame(code: string, hostPlayerId: string) {
     const room = this.rooms.get(code);
@@ -639,7 +660,7 @@ export class RoomStore {
     const host = room.players.find(p => p.id === hostPlayerId);
     if (!host || !host.isHost) throw new Error('Only the host can decide to play one more round');
 
-    if (room.status !== 'VOTE_RESOLVED') return;
+    if (room.status !== 'VOTE_RESOLVED' && room.status !== 'VOTING' && room.status !== 'DISCUSSION') return;
 
     // Reset votes for all players
     room.players.forEach(p => {
@@ -652,7 +673,6 @@ export class RoomStore {
     room.turnOrder = activePlayers.map(p => p.id).sort(() => Math.random() - 0.5);
     room.currentTurnIndex = 0;
     room.activePlayerId = room.turnOrder[0] || null;
-    room.chat = [];
 
     this.startPhase(code, 'DISCUSSION', 30);
   }
@@ -665,7 +685,7 @@ export class RoomStore {
     const host = room.players.find(p => p.id === hostPlayerId);
     if (!host || !host.isHost) throw new Error('Only the host can reveal the identity');
 
-    if (room.status !== 'VOTE_RESOLVED') return;
+    if (room.status !== 'VOTE_RESOLVED' && room.status !== 'VOTING') return;
 
     // Resolve standard voting logic to end game round
     this.resolveVoting(code);

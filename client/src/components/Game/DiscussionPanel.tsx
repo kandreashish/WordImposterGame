@@ -122,18 +122,18 @@ export const DiscussionPanel: React.FC = () => {
         </Card>
       )}
 
-      {/* Imposter Hint Section */}
-      {self.isImposter && room.imposterHint && (
-        <Card className="border-rose-500/20 bg-rose-950/10 p-4 flex items-start gap-3 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-16 h-16 bg-rose-500/5 rounded-full blur-xl" />
-          <div className="p-2 bg-rose-500/10 text-rose-400 rounded-lg flex-shrink-0 mt-0.5">
+      {/* Category Hint Section */}
+      {room.imposterHint && (
+        <Card className="border-amber-500/20 bg-amber-950/10 p-3.5 flex items-start gap-3 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full blur-xl" />
+          <div className="p-2 bg-amber-500/10 text-amber-400 rounded-lg flex-shrink-0 mt-0.5">
             <HelpCircle size={16} />
           </div>
           <div className="flex flex-col">
-            <span className="text-4xs font-extrabold text-rose-400 uppercase tracking-widest">
-              Imposter Clue Hint
+            <span className="text-4xs font-extrabold text-amber-400 uppercase tracking-widest">
+              Category Hint
             </span>
-            <p className="text-xs font-bold text-slate-200 mt-1 leading-relaxed">
+            <p className="text-xs font-bold text-slate-100 mt-0.5 leading-relaxed">
               "{room.imposterHint}"
             </p>
           </div>

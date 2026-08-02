@@ -1,17 +1,20 @@
 import React from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
+import { Button } from '../Common/Button.js';
 import { Timer } from '../Common/Timer.js';
 import { AvatarDisplay } from '../Common/AvatarKit.js';
-import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass, MessageSquare } from 'lucide-react';
+import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass, MessageSquare, RefreshCw, Eye, Crown } from 'lucide-react';
 
 export const VotingPanel: React.FC = () => {
-  const { room, playerId, submitVote } = useSocket();
+  const { room, playerId, submitVote, playMoreRound, revealVotedPlayer } = useSocket();
 
   if (!room) return null;
 
   const self = room.players.find(p => p.id === playerId);
   if (!self) return null;
+
+  const isHost = self.isHost;
 
   const hasVoted = self.voteTargetId !== null;
   const isAlive = self.isAlive;
@@ -223,6 +226,41 @@ export const VotingPanel: React.FC = () => {
             ))}
         </div>
       </Card>
+
+      {/* Host / Admin Action Controls during Voting */}
+      {isHost && (
+        <Card className="p-4 border-violet-500/30 bg-violet-950/15 dark:bg-violet-950/20 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-violet-600 dark:text-violet-400">
+              <Crown size={14} className="text-amber-500 dark:text-amber-400" />
+              Host Admin Controls
+            </div>
+            <span className="text-5xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded uppercase tracking-wider">
+              No waiting required
+            </span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2.5">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={playMoreRound}
+              className="flex-1 gap-1.5 border-violet-500/30"
+            >
+              <RefreshCw size={13} />
+              Start 2nd Clue Round
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={revealVotedPlayer}
+              className="flex-1 gap-1.5"
+            >
+              <Eye size={13} />
+              End Voting & Reveal
+            </Button>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };

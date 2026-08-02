@@ -1,14 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
 import { AvatarDisplay } from '../Common/AvatarKit.js';
-import { Crown, LogOut, RefreshCw, Trophy, UserCheck } from 'lucide-react';
+import { Crown, LogOut, RefreshCw, Trophy, UserCheck, Settings } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { trackEvent } from '../../utils/analytics.js';
+import { EditSettingsModal } from './EditSettingsModal.js';
 
 export const ResultsPanel: React.FC = () => {
   const { room, playerId, nextRound, leaveRoom } = useSocket();
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   useEffect(() => {
     if (room && room.roundResults) {
@@ -259,16 +261,26 @@ export const ResultsPanel: React.FC = () => {
         </Button>
 
         {isHost ? (
-          <Button variant="primary" size="lg" onClick={nextRound} className="sm:w-2/3 gap-2">
-            <RefreshCw size={16} />
-            Play Again
-          </Button>
+          <div className="flex sm:w-2/3 gap-2">
+            <Button variant="secondary" size="lg" onClick={() => setIsSettingsModalOpen(true)} className="px-4 gap-1.5" title="Change Game Configuration">
+              <Settings size={16} />
+              <span className="hidden sm:inline">Settings</span>
+            </Button>
+            <Button variant="primary" size="lg" onClick={nextRound} className="flex-1 gap-2">
+              <RefreshCw size={16} />
+              Play Again
+            </Button>
+          </div>
         ) : (
           <Card className="sm:w-2/3 p-0 justify-center items-center bg-slate-100/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 border flex select-none py-3 text-2xs font-extrabold theme-text-secondary tracking-wider uppercase">
             Ask the host to restart
           </Card>
         )}
       </div>
+
+      {isSettingsModalOpen && (
+        <EditSettingsModal onClose={() => setIsSettingsModalOpen(false)} />
+      )}
     </div>
   );
 };

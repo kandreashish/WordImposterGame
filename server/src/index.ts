@@ -143,6 +143,19 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Update Room Settings (Host Only)
+  socket.on('update-settings', ({ settings }: { settings: Partial<RoomSettings> }) => {
+    const { playerId, roomCode } = socket.data;
+    if (playerId && roomCode && settings) {
+      try {
+        store.updateSettings(roomCode, playerId, settings);
+        console.log(`Settings updated for Room ${roomCode}`);
+      } catch (error: any) {
+        socket.emit('game-error', error.message || 'Failed to update settings');
+      }
+    }
+  });
+
   // 5. Host starts game
   socket.on('start-game', () => {
     const { playerId, roomCode } = socket.data;

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
-import { Copy, Share2, Crown, Trash2, CheckCircle2, WifiOff, QrCode, Edit2, X, Zap, Users } from 'lucide-react';
+import { Copy, Share2, Crown, Trash2, CheckCircle2, WifiOff, QrCode, Edit2, X, Zap, Users, Settings } from 'lucide-react';
 import { trackEvent } from '../../utils/analytics.js';
 import { AVATARS, AvatarDisplay } from '../Common/AvatarKit.js';
+import { EditSettingsModal } from './EditSettingsModal.js';
 
 export const LobbyPanel: React.FC = () => {
   const { room, playerId, changeNickname, changeAvatar, startGame, kickPlayer, leaveRoom } = useSocket();
@@ -14,6 +15,7 @@ export const LobbyPanel: React.FC = () => {
 
   // Modal Profile Edit states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('');
   const [nameError, setNameError] = useState('');
@@ -120,10 +122,21 @@ export const LobbyPanel: React.FC = () => {
         <Card className="p-5 flex flex-col justify-between gap-3 border-slate-800 bg-slate-900/40 relative overflow-hidden">
           <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-indigo-600/10 rounded-full blur-2xl pointer-events-none" />
           <div className="flex flex-col gap-2">
-            <span className="text-[9px] font-extrabold tracking-[0.18em] uppercase block"
-              style={{ color: 'var(--color-text-secondary)' }}>
-              Game Settings
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-extrabold tracking-[0.18em] uppercase block"
+                style={{ color: 'var(--color-text-secondary)' }}>
+                Game Settings
+              </span>
+              {isHost && (
+                <button
+                  onClick={() => setIsSettingsModalOpen(true)}
+                  className="p-1 rounded-md text-slate-400 hover:text-violet-400 hover:bg-violet-500/10 transition-colors cursor-pointer"
+                  title="Edit Settings"
+                >
+                  <Settings size={13} />
+                </button>
+              )}
+            </div>
             <div className="flex flex-col gap-1.5 text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>
               <div className="flex items-center justify-between">
                 <span>Mode</span>
@@ -143,9 +156,16 @@ export const LobbyPanel: React.FC = () => {
               </div>
             </div>
           </div>
-          <Button onClick={handleShareLink} size="sm" className="w-full gap-1.5">
-            <Share2 size={11} /> {shareText}
-          </Button>
+          <div className="flex gap-1.5 w-full">
+            <Button onClick={handleShareLink} size="sm" className="flex-1 gap-1.5">
+              <Share2 size={11} /> {shareText}
+            </Button>
+            {isHost && (
+              <Button variant="secondary" size="sm" onClick={() => setIsSettingsModalOpen(true)} className="px-2.5" title="Change Configuration">
+                <Settings size={11} />
+              </Button>
+            )}
+          </div>
         </Card>
       </div>
 
@@ -434,6 +454,11 @@ export const LobbyPanel: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* ── Edit Settings Modal ───────────────────────── */}
+      {isSettingsModalOpen && (
+        <EditSettingsModal onClose={() => setIsSettingsModalOpen(false)} />
       )}
     </div>
   );

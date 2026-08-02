@@ -31,6 +31,7 @@ interface SocketContextType {
   leaveRoom: () => void;
   changeNickname: (nickname: string) => void;
   changeAvatar: (avatar: string) => void;
+  updateSettings: (newSettings: Partial<RoomSettings>) => void;
   submitClue: (text: string) => void;
   doneSpeaking: () => void;
   playMoreRound: () => void;
@@ -300,6 +301,11 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socket?.emit('change-avatar', { avatar: newAvatar });
   };
 
+  const updateSettings = (newSettings: Partial<RoomSettings>) => {
+    trackEvent('update_settings', { screen: room?.status || 'Lobby', settings: newSettings });
+    socket?.emit('update-settings', { settings: newSettings });
+  };
+
   const submitClue = (text: string) => {
     trackEvent('click_submit_clue', { screen: 'Discussion', wordCount: text.split(' ').length });
     socket?.emit('submit-clue', { text });
@@ -342,6 +348,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         leaveRoom,
         changeNickname,
         changeAvatar,
+        updateSettings,
         submitClue,
         doneSpeaking,
         playMoreRound,
