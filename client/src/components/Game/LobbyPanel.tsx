@@ -146,9 +146,9 @@ export const LobbyPanel: React.FC = () => {
                 <span>Imposters</span>
                 <span className="font-bold" style={{ color: 'var(--color-text-primary)' }}>{room.settings.imposterCount}</span>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Categories</span>
-                <span className="font-bold truncate max-w-[80px] text-right" style={{ color: 'var(--color-text-primary)' }}>
+              <div className="flex items-start justify-between gap-2">
+                <span className="shrink-0">Categories</span>
+                <span className="font-bold text-right break-words" style={{ color: 'var(--color-text-primary)' }}>
                   {room.settings.categories && room.settings.categories.length > 0
                     ? room.settings.categories.join(', ')
                     : 'All'}

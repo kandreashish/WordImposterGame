@@ -132,16 +132,22 @@ export const Room: React.FC = () => {
         {/* Global Error Modal for Join Errors */}
         <Modal
           isOpen={error !== null}
-          onClose={() => setError(null)}
-          title="Game Error"
+          onClose={() => {
+            setError(null);
+            navigate('/');
+          }}
+          title="Cannot Join Room"
         >
           <div className="flex flex-col items-center text-center p-2">
             <AlertTriangle className="text-rose-500 w-12 h-12 mb-3" />
             <p className="text-sm font-semibold text-slate-300 leading-relaxed mb-4">
               {error}
             </p>
-            <Button variant="secondary" size="md" onClick={() => setError(null)} fullWidth>
-              Understood
+            <Button variant="secondary" size="md" onClick={() => {
+              setError(null);
+              navigate('/');
+            }} fullWidth>
+              Go to Home
             </Button>
           </div>
         </Modal>
@@ -152,9 +158,9 @@ export const Room: React.FC = () => {
           type={serverError?.type}
           title={serverError?.title}
           message={serverError?.message ?? ''}
-          onRetry={() => { clearServerError(); window.location.reload(); }}
-          onGoHome={() => { clearServerError(); window.location.reload(); }}
-          buttonText="Refresh Page"
+          onRetry={() => { clearServerError(); navigate('/'); }}
+          onGoHome={() => { clearServerError(); navigate('/'); }}
+          buttonText="Go to Home"
         />
       </div>
     );
@@ -284,9 +290,9 @@ export const Room: React.FC = () => {
         type={serverError?.type}
         title={serverError?.title}
         message={serverError?.message ?? ''}
-        onRetry={() => { clearServerError(); window.location.reload(); }}
-        onGoHome={() => { clearServerError(); window.location.reload(); }}
-        buttonText="Refresh Page"
+        onRetry={() => { clearServerError(); navigate('/'); }}
+        onGoHome={() => { clearServerError(); navigate('/'); }}
+        buttonText="Go to Home"
       />
     </div>
   );

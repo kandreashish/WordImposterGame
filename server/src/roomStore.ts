@@ -53,6 +53,7 @@ export class RoomStore {
   private inactivityTimers = new Map<string, NodeJS.Timeout>();
   private gameIntervals = new Map<string, NodeJS.Timeout>();
   private disconnectTimers = new Map<string, Map<string, NodeJS.Timeout>>(); // roomCode -> (playerId -> Timeout)
+  private hostPlayedWords = new Map<string, { words: string[]; lastPlayedTimestamp: number }>(); // hostId -> { words, lastPlayedTimestamp }
   private dataFilePath: string;
   private totalGamesPlayed: number = 0;
 
@@ -85,9 +86,14 @@ export class RoomStore {
         // Mark players as disconnected on disk reboot so they reconnect cleanly
         players: r.players.map(p => ({ ...p, isConnected: false, socketId: null }))
       }));
+      const hostPlayedWordsObj: Record<string, { words: string[]; lastPlayedTimestamp: number }> = {};
+      this.hostPlayedWords.forEach((val, key) => {
+        hostPlayedWordsObj[key] = val;
+      });
       const payload = {
         totalGamesPlayed: this.totalGamesPlayed,
-        rooms: serializableRooms
+        rooms: serializableRooms,
+        hostPlayedWords: hostPlayedWordsObj
       };
       fs.writeFileSync(this.dataFilePath, JSON.stringify(payload, null, 2));
     } catch (err) {
@@ -107,6 +113,11 @@ export class RoomStore {
         } else if (parsed && typeof parsed === 'object') {
           this.totalGamesPlayed = parsed.totalGamesPlayed || 0;
           loaded = parsed.rooms || [];
+          if (parsed.hostPlayedWords) {
+            Object.entries(parsed.hostPlayedWords as Record<string, { words: string[]; lastPlayedTimestamp: number }>).forEach(([hostId, data]) => {
+              this.hostPlayedWords.set(hostId, data);
+            });
+          }
         }
         for (const room of loaded) {
           // Reset runtime variables
@@ -458,9 +469,29 @@ export class RoomStore {
       filteredBank = wordBank;
     }
 
-    // Filter out words that have already been played in this room
-    let availableBank = filteredBank.filter(w => !room.usedWords.includes(w.majority));
-    // If all words in the selected bank have been used, recycle the bank so the game never gets stuck
+    // Retrieve host's played words in the last 24 hours
+    const now = Date.now();
+    const DAY_IN_MS = 24 * 60 * 60 * 1000;
+    let hostEntry = this.hostPlayedWords.get(hostPlayerId);
+    if (hostEntry && (now - hostEntry.lastPlayedTimestamp > DAY_IN_MS)) {
+      // Reset if more than 24 hours have passed since last played update
+      hostEntry = { words: [], lastPlayedTimestamp: now };
+      this.hostPlayedWords.set(hostPlayerId, hostEntry);
+    } else if (!hostEntry) {
+      hostEntry = { words: [], lastPlayedTimestamp: now };
+      this.hostPlayedWords.set(hostPlayerId, hostEntry);
+    }
+    const hostUsedWords = hostEntry.words;
+
+    // Filter out words that have already been played in this room or played by host today
+    let availableBank = filteredBank.filter(w => !room.usedWords.includes(w.majority) && !hostUsedWords.includes(w.majority));
+    
+    // Fallback 1: If host filter eliminates all options, ignore host history but respect room usedWords
+    if (availableBank.length === 0) {
+      availableBank = filteredBank.filter(w => !room.usedWords.includes(w.majority));
+    }
+
+    // Fallback 2: If all words in the selected bank have been used in this room, recycle room usedWords
     if (availableBank.length === 0) {
       room.usedWords = room.usedWords.filter(w => !filteredBank.some(fb => fb.majority === w));
       availableBank = filteredBank;
@@ -470,6 +501,13 @@ export class RoomStore {
     if (!room.usedWords.includes(wordPair.majority)) {
       room.usedWords.push(wordPair.majority);
     }
+
+    // Track for host daily repetition avoidance
+    if (!hostUsedWords.includes(wordPair.majority)) {
+      hostUsedWords.push(wordPair.majority);
+    }
+    hostEntry.lastPlayedTimestamp = now;
+    this.hostPlayedWords.set(hostPlayerId, hostEntry);
 
     room.majorityWord = wordPair.majority;
     if (room.settings.gameMode === 'classic') {

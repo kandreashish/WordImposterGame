@@ -64,4 +64,5 @@ export interface Room {
   imposterHint: string | null;
   votedPlayerId: string | null;
   usedWords: string[];
+  hostPlayedWords?: Record<string, { words: string[]; lastPlayedTimestamp: number }>;
 }
