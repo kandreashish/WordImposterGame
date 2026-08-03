@@ -22,7 +22,9 @@ export const Room: React.FC = () => {
     playerId,
     isConnected,
     joinRoom,
+    startGame,
     nextRound,
+    leaveRoom,
     error,
     setError,
     serverError,
@@ -221,7 +223,7 @@ export const Room: React.FC = () => {
               className="px-4 py-2 rounded-xl text-xs font-extrabold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/50 hover:bg-rose-100 dark:hover:bg-rose-950/60 transition-all flex items-center gap-2 cursor-pointer shadow-xs"
             >
               <RotateCcw size={14} />
-              New Game
+              Load a new game
             </button>
           </div>
         )}
@@ -231,39 +233,64 @@ export const Room: React.FC = () => {
       <Modal
         isOpen={isNewGameModalOpen}
         onClose={() => setIsNewGameModalOpen(false)}
-        title="Start New Game?"
+        title="Load a New Game"
       >
         <div className="flex flex-col items-center text-center p-3">
           <div className="p-3 bg-rose-500/10 text-rose-500 rounded-full mb-3">
             <RotateCcw className="w-8 h-8" />
           </div>
           <h3 className="text-base font-extrabold theme-text-primary uppercase tracking-wide mb-1">
-            Reset Current Match?
+            Choose Game Action
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-6 max-w-xs">
-            Are you sure you want to end the current game? All players will be returned to the room lobby.
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-5 max-w-xs">
+            Would you like to restart immediately with a new secret word using the same players, or return all players to a fresh room lobby?
           </p>
 
-          <div className="flex gap-3 w-full">
+          <div className="flex flex-col gap-2.5 w-full">
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => {
+                setIsNewGameModalOpen(false);
+                startGame();
+              }}
+              fullWidth
+            >
+              Restart with New Word (Same Players)
+            </Button>
+
             <Button
               variant="secondary"
-              size="md"
-              onClick={() => setIsNewGameModalOpen(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
               size="md"
               onClick={() => {
                 setIsNewGameModalOpen(false);
                 nextRound();
               }}
-              className="flex-1"
+              fullWidth
             >
-              Yes, Start New
+              Back to Room Lobby
             </Button>
+
+            <Button
+              variant="danger"
+              size="md"
+              onClick={() => {
+                setIsNewGameModalOpen(false);
+                leaveRoom();
+                navigate('/');
+              }}
+              fullWidth
+            >
+              Start a New Room (Exit Current)
+            </Button>
+
+            <button
+              type="button"
+              onClick={() => setIsNewGameModalOpen(false)}
+              className="mt-1 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors py-1 cursor-pointer"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       </Modal>
