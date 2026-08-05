@@ -18,7 +18,7 @@ export const VoteResolvedPanel: React.FC = () => {
   const isHost = self.isHost;
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       {/* Header with Timer */}
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center gap-3">
@@ -122,20 +122,27 @@ export const VoteResolvedPanel: React.FC = () => {
               if (!target) return null;
 
               return (
-                <div key={player.id} className="flex items-center justify-between p-2 rounded-xl bg-slate-100/80 dark:bg-slate-900/35 border border-slate-200 dark:border-slate-900/80">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                      <AvatarDisplay avatarId={player.avatar || 'fox'} size={24} />
+                <div key={player.id} className="flex flex-col gap-1.5 p-3 rounded-xl bg-slate-100/80 dark:bg-slate-900/35 border border-slate-200 dark:border-slate-900/80 animate-slide-up">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                        <AvatarDisplay avatarId={player.avatar || 'fox'} size={24} />
+                      </div>
+                      <span className="text-xs font-bold text-slate-900 dark:text-slate-200">{player.nickname}</span>
                     </div>
-                    <span className="text-xs font-bold text-slate-900 dark:text-slate-200">{player.nickname}</span>
-                  </div>
-                  <ArrowRight size={12} className="text-slate-400 dark:text-slate-600" />
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-300">{target.nickname}</span>
-                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                      <AvatarDisplay avatarId={target.avatar || 'fox'} size={24} />
+                    <ArrowRight size={12} className="text-slate-400 dark:text-slate-650" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-300">{target.nickname}</span>
+                      <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                        <AvatarDisplay avatarId={target.avatar || 'fox'} size={24} />
+                      </div>
                     </div>
                   </div>
+                  {player.voteReason && (
+                    <div className="text-[10px] italic font-semibold text-rose-500 dark:text-rose-400/90 bg-rose-500/5 border border-rose-500/10 px-2 py-1 rounded-lg mt-0.5 text-center leading-normal">
+                      Accusation: "{player.voteReason}"
+                    </div>
+                  )}
                 </div>
               );
             })}

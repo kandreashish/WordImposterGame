@@ -77,7 +77,7 @@ export const ResultsPanel: React.FC = () => {
   const scoreboard = [...room.players].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       {/* Top Banner Winner Reveal */}
       <Card 
         className={`text-center py-8 relative overflow-hidden border ${

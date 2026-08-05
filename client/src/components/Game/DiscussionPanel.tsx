@@ -44,7 +44,7 @@ export const DiscussionPanel: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       {/* Header with Timer */}
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center gap-3">
@@ -272,12 +272,48 @@ export const DiscussionPanel: React.FC = () => {
 
                 {/* Show active speaking slot if currently speaking */}
                 {isSpeaking && (
-                  <div className="flex items-center justify-between text-xs px-2 py-1 rounded-lg bg-violet-600/15 border border-violet-500/40 animate-pulse text-violet-300">
-                    <span className="text-4xs font-extrabold uppercase tracking-wider flex items-center gap-1">
-                      <Volume2 size={10} className="animate-bounce text-violet-400" />
-                      Speaking Now...
-                    </span>
-                    <span className="text-[9px] font-black uppercase text-violet-400">Current Turn</span>
+                  <div className="flex flex-col gap-1.5 mt-1">
+                    <div className="flex items-center justify-between text-xs px-2 py-1.5 rounded-xl bg-violet-600/15 border border-violet-500/40 text-violet-300">
+                      <span className="text-4xs font-extrabold uppercase tracking-wider flex items-center gap-1">
+                        <Volume2 size={10} className="animate-bounce text-violet-400 flex-shrink-0" />
+                        {isSelf ? 'Your Turn to Speak' : 'Speaking Now...'}
+                      </span>
+                      <span className="text-[9px] font-black uppercase text-violet-400">
+                        {isSelf ? 'You' : 'Active'}
+                      </span>
+                    </div>
+                    {isSelf && (
+                      <>
+                        <form
+                          onSubmit={handleClueSubmit}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex gap-1.5 w-full mt-0.5"
+                        >
+                          <input
+                            type="text"
+                            value={clueText}
+                            onChange={(e) => setClueText(e.target.value)}
+                            placeholder="Type clue... (e.g. Warm)"
+                            className="glass-input px-2.5 py-1.5 rounded-xl text-slate-100 font-medium text-xs focus:outline-none flex-1 bg-slate-950 border border-slate-800 min-w-0"
+                            maxLength={30}
+                          />
+                          <Button type="submit" size="sm" className="gap-1 flex-shrink-0 text-3xs px-2.5 py-1 rounded-xl">
+                            <Send size={10} /> Send
+                          </Button>
+                        </form>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            doneSpeaking();
+                          }}
+                          className="w-full text-3xs font-extrabold uppercase tracking-wider py-1.5 rounded-xl shadow-lg shadow-violet-500/20"
+                        >
+                          Done Speaking
+                        </Button>
+                      </>
+                    )}
                   </div>
                 )}
 

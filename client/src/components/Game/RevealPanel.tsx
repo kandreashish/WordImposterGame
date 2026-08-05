@@ -4,6 +4,7 @@ import { Card } from '../Common/Card.js';
 import { Timer } from '../Common/Timer.js';
 import { Eye, EyeOff, HelpCircle, ShieldAlert } from 'lucide-react';
 import { trackEvent } from '../../utils/analytics.js';
+import { playSound, vibrateMobile } from '../../utils/sound.js';
 
 export const RevealPanel: React.FC = () => {
   const { room, playerId } = useSocket();
@@ -34,8 +35,18 @@ export const RevealPanel: React.FC = () => {
 
       <div 
         onClick={() => {
-          setIsRevealed(!isRevealed);
-          trackEvent('click_reveal_word', { screen: 'Reveal', isRevealed: !isRevealed, isImposter });
+          const next = !isRevealed;
+          setIsRevealed(next);
+          if (next) {
+            if (isImposter) {
+              playSound('suspense');
+              vibrateMobile([100, 50, 100, 50, 300]);
+            } else {
+              playSound('click');
+              vibrateMobile(50);
+            }
+          }
+          trackEvent('click_reveal_word', { screen: 'Reveal', isRevealed: next, isImposter });
         }}
         className="w-full h-80 perspective-1000 cursor-pointer group"
       >
@@ -71,7 +82,9 @@ export const RevealPanel: React.FC = () => {
           <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180">
             {isImposter ? (
               <Card 
-                className="w-full h-full justify-center items-center border-rose-500/30 text-center relative p-5"
+                className={`w-full h-full justify-center items-center border-rose-500/30 text-center relative p-5 ${
+                  isRevealed ? 'animate-shake' : ''
+                }`}
                 glow="imposter"
               >
                 <div className="absolute inset-4 border border-dashed border-rose-950/40 rounded-2xl pointer-events-none" />

@@ -13,6 +13,7 @@ export interface Player {
   isAlive: boolean;
   score: number;
   voteTargetId: string | null; // Player ID they voted for this round
+  voteReason?: string | null;
   isConnected: boolean;
   socketId?: string | null;
   avatar: string;

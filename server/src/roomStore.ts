@@ -234,6 +234,7 @@ export class RoomStore {
       isAlive: true,
       score: 0,
       voteTargetId: null,
+      voteReason: null,
       isConnected: true,
       socketId,
       avatar: randomAvatar
@@ -522,6 +523,7 @@ export class RoomStore {
         p.isAlive = true;
         p.isReady = false;
         p.voteTargetId = null;
+        p.voteReason = null;
         if (imposterIds.has(p.id)) {
           p.isImposter = true;
           p.role = 'IMPOSTER';
@@ -536,6 +538,7 @@ export class RoomStore {
         p.isAlive = false;
         p.isReady = false;
         p.voteTargetId = null;
+        p.voteReason = null;
         p.isImposter = false;
         p.role = 'MAJORITY';
         p.word = null;
@@ -670,7 +673,7 @@ export class RoomStore {
   }
 
   // Submit Vote
-  public submitVote(code: string, voterId: string, targetId: string) {
+  public submitVote(code: string, voterId: string, targetId: string, reason: string | null = null) {
     const room = this.rooms.get(code);
     if (!room) return;
 
@@ -678,6 +681,7 @@ export class RoomStore {
     if (!voter || !voter.isAlive) return;
 
     voter.voteTargetId = targetId;
+    voter.voteReason = reason;
     this.touchRoom(code);
 
     // Check if everyone voted
@@ -742,6 +746,7 @@ export class RoomStore {
     // Reset votes for all players
     room.players.forEach(p => {
       p.voteTargetId = null;
+      p.voteReason = null;
     });
     room.votedPlayerId = null;
 
@@ -872,6 +877,7 @@ export class RoomStore {
       p.isImposter = false;
       p.role = 'MAJORITY';
       p.voteTargetId = null;
+      p.voteReason = null;
       p.word = null;
     });
 
@@ -920,6 +926,7 @@ export class RoomStore {
       p.isImposter = false;
       p.role = 'MAJORITY';
       p.voteTargetId = null;
+      p.voteReason = null;
       p.word = null;
     });
 

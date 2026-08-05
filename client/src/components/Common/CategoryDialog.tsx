@@ -241,7 +241,7 @@ export const CategoryDialog: React.FC<CategoryDialogProps> = ({ selected, onTogg
                 type="button"
                 onClick={() => !isLast && onToggle(cat.label)}
                 title={isLast ? 'At least one category must be selected' : undefined}
-                className="relative group rounded-2xl overflow-hidden focus:outline-none"
+                className="relative group rounded-2xl overflow-hidden focus:outline-none hover:scale-[1.03] active:scale-95 transition-transform duration-200"
                 style={{
                   height: 130,
                   cursor: isLast ? 'not-allowed' : 'pointer',

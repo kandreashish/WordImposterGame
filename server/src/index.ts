@@ -185,12 +185,30 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Emoji Reaction
+  socket.on('emoji-reaction', ({ emoji }: { emoji: string }) => {
+    const { playerId, roomCode } = socket.data;
+    if (playerId && roomCode && emoji) {
+      const room = store.getRoom(roomCode);
+      if (room) {
+        const player = room.players.find(p => p.id === playerId);
+        if (player) {
+          io.to(roomCode).emit('emoji-reaction', {
+            playerId,
+            nickname: player.nickname,
+            emoji
+          });
+        }
+      }
+    }
+  });
+
   // 6. Submit Vote
-  socket.on('submit-vote', ({ targetPlayerId }: { targetPlayerId: string }) => {
+  socket.on('submit-vote', ({ targetPlayerId, reason }: { targetPlayerId: string; reason?: string }) => {
     const { playerId, roomCode } = socket.data;
     if (playerId && roomCode) {
       try {
-        store.submitVote(roomCode, playerId, targetPlayerId);
+        store.submitVote(roomCode, playerId, targetPlayerId, reason || null);
       } catch (error: any) {
         socket.emit('game-error', error.message || 'Failed to submit vote');
       }

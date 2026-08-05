@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Card } from '../Common/Card.js';
 import { Button } from '../Common/Button.js';
 import { Timer } from '../Common/Timer.js';
 import { AvatarDisplay } from '../Common/AvatarKit.js';
+import { Modal } from '../Common/Modal.js';
 import { CheckCircle2, ShieldAlert, UserCheck, X, Hourglass, MessageSquare, RefreshCw, Eye, Crown } from 'lucide-react';
+
+const ACCUSATIONS = [
+  "Their vibe is off...",
+  "Looking way too quiet.",
+  "Fumbled their clue description!",
+  "Avoiding eye contact.",
+  "Sweating in real life!",
+  "Just pure gut feeling.",
+];
 
 export const VotingPanel: React.FC = () => {
   const { room, playerId, submitVote, playMoreRound, revealVotedPlayer } = useSocket();
@@ -13,6 +23,8 @@ export const VotingPanel: React.FC = () => {
 
   const self = room.players.find(p => p.id === playerId);
   if (!self) return null;
+
+  const [accusedId, setAccusedId] = useState<string | null>(null);
 
   const isHost = self.isHost;
 
@@ -33,11 +45,11 @@ export const VotingPanel: React.FC = () => {
 
   const handleVoteSubmit = (targetPlayerId: string) => {
     if (!isAlive) return;
-    submitVote(targetPlayerId);
+    setAccusedId(targetPlayerId);
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-md mx-auto">
       {/* Header with Timer */}
       <div className="flex justify-between items-center w-full">
         <div className="flex items-center gap-3">
@@ -111,14 +123,14 @@ export const VotingPanel: React.FC = () => {
                 type="button"
                 onClick={() => !disabled && handleVoteSubmit(player.id)}
                 disabled={disabled}
-                className={`w-full flex flex-col gap-2 p-3.5 sm:p-4 rounded-xl border text-left transition-all ${
+                className={`w-full flex flex-col gap-2 p-3.5 sm:p-4 rounded-xl border text-left transition-all duration-200 ${
                   isMyVotedTarget
-                    ? 'bg-violet-50/90 dark:bg-violet-950/40 border-2 border-violet-500 shadow-md shadow-violet-500/10'
+                    ? 'bg-violet-50/90 dark:bg-violet-950/40 border-2 border-violet-500 shadow-md shadow-violet-500/10 scale-[1.01] shadow-lg shadow-violet-500/20'
                     : hasVotesReceived
-                    ? 'bg-rose-50/70 dark:bg-rose-950/20 border border-rose-300 dark:border-rose-500/40'
+                    ? 'bg-rose-50/70 dark:bg-rose-950/20 border border-rose-300 dark:border-rose-500/40 hover:scale-[1.015] active:scale-[0.98]'
                     : disabled
                     ? 'bg-slate-100/50 dark:bg-slate-900/10 border-slate-200 dark:border-slate-800/60 opacity-60 cursor-not-allowed'
-                    : 'bg-white/90 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-violet-400 dark:hover:border-violet-500/40 hover:bg-white dark:hover:bg-slate-900 cursor-pointer shadow-xs'
+                    : 'bg-white/90 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 hover:border-violet-400 dark:hover:border-violet-500/40 hover:bg-white dark:hover:bg-slate-900 cursor-pointer shadow-xs hover:scale-[1.015] active:scale-[0.98]'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
@@ -260,6 +272,44 @@ export const VotingPanel: React.FC = () => {
             </Button>
           </div>
         </Card>
+      )}
+
+      {/* Goofy Accusations Modal */}
+      {accusedId && (
+        <Modal
+          isOpen={accusedId !== null}
+          onClose={() => setAccusedId(null)}
+          title="Pick Accusation Reason"
+        >
+          <div className="flex flex-col gap-3.5 p-2 select-none">
+            <span className="text-3xs font-extrabold text-violet-400 uppercase tracking-widest text-center">
+              Why do you suspect {room.players.find(p => p.id === accusedId)?.nickname}?
+            </span>
+            <div className="flex flex-col gap-2">
+              {ACCUSATIONS.map((reason) => (
+                <button
+                  key={reason}
+                  onClick={() => {
+                    submitVote(accusedId, reason);
+                    setAccusedId(null);
+                  }}
+                  className="w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-850 hover:border-violet-500/35 text-xs font-bold text-slate-100 hover:scale-[1.01] transition-all cursor-pointer"
+                >
+                  {reason}
+                </button>
+              ))}
+              <button
+                onClick={() => {
+                  submitVote(accusedId);
+                  setAccusedId(null);
+                }}
+                className="w-full text-center p-3 rounded-xl border border-slate-800/20 bg-slate-950/40 text-xs font-bold text-slate-400 hover:text-slate-200 transition-colors mt-1 cursor-pointer"
+              >
+                No Reason / Silent Accusation
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );

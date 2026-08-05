@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../../contexts/SocketContext.js';
 import { Button } from '../Common/Button.js';
 import { Card } from '../Common/Card.js';
@@ -6,6 +6,8 @@ import { Copy, Share2, Crown, Trash2, CheckCircle2, WifiOff, QrCode, Edit2, X, Z
 import { trackEvent } from '../../utils/analytics.js';
 import { AVATARS, AvatarDisplay } from '../Common/AvatarKit.js';
 import { EditSettingsModal } from './EditSettingsModal.js';
+import { playSound } from '../../utils/sound.js';
+import confetti from 'canvas-confetti';
 
 export const LobbyPanel: React.FC = () => {
   const { room, playerId, changeNickname, changeAvatar, startGame, kickPlayer, leaveRoom } = useSocket();
@@ -19,6 +21,32 @@ export const LobbyPanel: React.FC = () => {
   const [newNickname, setNewNickname] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('');
   const [nameError, setNameError] = useState('');
+
+  // Keep track of players count to fire join celebration confetti
+  const prevCountRef = useRef(room ? room.players.length : 0);
+
+  useEffect(() => {
+    if (!room) return;
+    const currentCount = room.players.length;
+    if (currentCount > prevCountRef.current) {
+      // Dual confetti pop on player join!
+      confetti({
+        particleCount: 20,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.8 },
+        colors: ['#a78bfa', '#818cf8', '#ec4899']
+      });
+      confetti({
+        particleCount: 20,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.8 },
+        colors: ['#a78bfa', '#818cf8', '#ec4899']
+      });
+    }
+    prevCountRef.current = currentCount;
+  }, [room?.players.length]);
 
   if (!room) return null;
 
@@ -36,6 +64,7 @@ export const LobbyPanel: React.FC = () => {
   const getShareMessage = () => `Join room code ${room.code} to play Word Imposter. ${getJoinUrl()}`;
 
   const handleCopyCode = async () => {
+    playSound('click');
     trackEvent('click_copy_room_code', { screen: 'Lobby', roomCode: room.code });
     try {
       await navigator.clipboard.writeText(room.code);
@@ -47,6 +76,7 @@ export const LobbyPanel: React.FC = () => {
   };
 
   const handleShareLink = async () => {
+    playSound('click');
     trackEvent('click_share_room_link', { screen: 'Lobby', roomCode: room.code });
     const shareMessage = getShareMessage();
     const shareData = {
@@ -66,6 +96,7 @@ export const LobbyPanel: React.FC = () => {
   };
 
   const openEditModal = () => {
+    playSound('click');
     if (self) {
       setNewNickname(self.nickname);
       setSelectedAvatar(self.avatar || 'fox');
@@ -77,6 +108,7 @@ export const LobbyPanel: React.FC = () => {
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
+    playSound('click');
     if (!newNickname || newNickname.trim() === '') { setNameError('Name cannot be empty'); return; }
     changeNickname(newNickname.trim());
     changeAvatar(selectedAvatar);
@@ -85,10 +117,10 @@ export const LobbyPanel: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full max-w-xl mx-auto">
+    <div className="flex flex-col gap-5 w-full max-w-md mx-auto">
 
       {/* ── Top Cards Row ─────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
 
         {/* Room Code */}
         <Card className="p-5 flex flex-col items-center justify-between gap-4 text-center border-slate-800 bg-slate-900/40 relative overflow-hidden" glow="primary">
@@ -399,7 +431,12 @@ export const LobbyPanel: React.FC = () => {
                       <button
                         key={av.id}
                         type="button"
-                        onClick={() => !isTaken && setSelectedAvatar(av.id)}
+                        onClick={() => {
+                          if (!isTaken) {
+                            setSelectedAvatar(av.id);
+                            playSound('click');
+                          }
+                        }}
                         disabled={isTaken}
                         className={`relative flex flex-col items-center gap-1 p-2.5 rounded-2xl border transition-all ${
                           isTaken

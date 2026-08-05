@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 import { useSocket } from '../contexts/SocketContext.js';
 import { trackEvent } from '../utils/analytics.js';
-
 import { playSound, isSoundEnabled, setSoundEnabled } from '../utils/sound.js';
+import confetti from 'canvas-confetti';
 
 export const Home: React.FC = () => {
   const { room, theme, toggleTheme } = useSocket();
@@ -68,17 +68,27 @@ export const Home: React.FC = () => {
   }, [room, navigate]);
 
   const handleCreateNav = () => {
+    playSound('click');
     trackEvent('click_create_room_nav', { screen: 'Home' });
   };
 
   const handleJoinNav = () => {
+    playSound('click');
     trackEvent('click_join_room_nav', { screen: 'Home' });
   };
 
   const triggerSecret = () => {
+    playSound('click');
     const next = sillySecretCount + 1;
     setSillySecretCount(next);
     if (next >= 5) {
+      playSound('gameStart');
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#fbbf24', '#f43f5e', '#8b5cf6']
+      });
       setShowSecretMessage(true);
       setTimeout(() => setShowSecretMessage(false), 4000);
       setSillySecretCount(0);
@@ -92,23 +102,31 @@ export const Home: React.FC = () => {
       <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 left-10 w-64 h-64 bg-fuchsia-600/10 rounded-full blur-3xl pointer-events-none" />
 
+      {/* Floating Sparkles elements drifting in the background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[10%] left-[8%] text-violet-500/25 animate-float" style={{ animationDuration: '6s', animationDelay: '0s' }}><Sparkles size={20} /></div>
+        <div className="absolute top-[40%] right-[12%] text-indigo-500/20 animate-float" style={{ animationDuration: '8s', animationDelay: '1s' }}><Sparkles size={24} /></div>
+        <div className="absolute bottom-[20%] left-[15%] text-fuchsia-500/25 animate-float" style={{ animationDuration: '7s', animationDelay: '2.5s' }}><Sparkles size={16} /></div>
+        <div className="absolute bottom-[45%] left-[80%] text-pink-500/20 animate-float" style={{ animationDuration: '9s', animationDelay: '0.5s' }}><Sparkles size={22} /></div>
+      </div>
+
       {/* Floating Goofy Badges for visual flare */}
       <div className="hidden lg:block absolute top-24 left-12 animate-float pointer-events-none">
         <div className="glass-panel px-4 py-2 rounded-2xl flex items-center gap-2.5 text-xs font-bold text-amber-400 border-amber-500/20 shadow-lg shadow-amber-500/10 rotate-[-6deg]">
           <Ghost size={16} className="text-amber-400 animate-bounce" />
-          <span>"I swear I'm a civilian!" 🤥</span>
+          <span>"I swear I'm a civilian!"</span>
         </div>
       </div>
       <div className="hidden lg:block absolute top-36 right-12 animate-float [animation-delay:1.5s] pointer-events-none">
         <div className="glass-panel px-4 py-2 rounded-2xl flex items-center gap-2.5 text-xs font-bold text-violet-400 border-violet-500/20 shadow-lg shadow-violet-500/10 rotate-[8deg]">
           <Flame size={16} className="text-rose-400 animate-pulse" />
-          <span>Spicy Bluffs Guaranteed 🔥</span>
+          <span>Spicy Bluffs Guaranteed</span>
         </div>
       </div>
       <div className="hidden lg:block absolute bottom-24 left-16 animate-float [animation-delay:2.8s] pointer-events-none">
         <div className="glass-panel px-4 py-2 rounded-2xl flex items-center gap-2.5 text-xs font-bold text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-500/10 rotate-[4deg]">
           <Laugh size={16} className="text-emerald-400" />
-          <span>Friendships Ruined: 99.9% 😈</span>
+          <span>Friendships Ruined: 99.9%</span>
         </div>
       </div>
 
@@ -117,13 +135,13 @@ export const Home: React.FC = () => {
         <div className="fixed top-6 z-50 animate-bounce">
           <div className="bg-gradient-to-r from-amber-500 via-rose-500 to-violet-600 text-white font-extrabold px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/30 text-sm">
             <Zap className="animate-zap" size={20} />
-            <span>🎉 Easter Egg Unlocked: You are 100% suspicious right now!</span>
+            <span>Easter Egg Unlocked: You are 100% suspicious right now!</span>
           </div>
         </div>
       )}
 
       {/* Top Bar Controls */}
-      <div className="w-full max-w-4xl flex items-center justify-between mb-4 z-20">
+      <div className="w-full max-w-md flex items-center justify-between mb-4 z-20">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="badge-you text-xs px-3 py-1 rounded-full flex items-center gap-1.5 font-bold tracking-wider">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
@@ -147,7 +165,10 @@ export const Home: React.FC = () => {
           </button>
 
           <button
-            onClick={toggleTheme}
+            onClick={() => {
+              toggleTheme();
+              playSound('click');
+            }}
             className="p-2.5 bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition-all cursor-pointer shadow-lg"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
           >
@@ -157,7 +178,7 @@ export const Home: React.FC = () => {
       </div>
 
       {/* Main Container */}
-      <div className="w-full max-w-2xl relative z-10 flex flex-col gap-6">
+      <div className="w-full max-w-md relative z-10 flex flex-col gap-6">
 
         {/* Hero Card */}
         <Card className="items-center text-center glow-card border-violet-500/20 relative overflow-hidden" glow="primary">
@@ -184,7 +205,7 @@ export const Home: React.FC = () => {
           </h1>
 
           <p className="text-slate-300 text-base md:text-lg font-medium max-w-md mb-6 leading-relaxed">
-            The ultra-goofy social deduction game where one of you is completely clueless and trying to fake it till they make it! 🕵️‍♂️✨
+            The ultra-goofy social deduction game where one of you is completely clueless and trying to fake it till they make it!
           </p>
 
           {/* Action Buttons */}
@@ -230,34 +251,43 @@ export const Home: React.FC = () => {
           <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
             <div className="flex items-center gap-1.5 bg-slate-950/60 p-1 rounded-2xl border border-slate-800/80">
               <button
-                onClick={() => setActiveTab('overview')}
+                onClick={() => {
+                  setActiveTab('overview');
+                  playSound('click');
+                }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                   activeTab === 'overview'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                🎮 How It Works
+                How It Works
               </button>
               <button
-                onClick={() => setActiveTab('rules')}
+                onClick={() => {
+                  setActiveTab('rules');
+                  playSound('click');
+                }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                   activeTab === 'rules'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                📜 Game Rules
+                Game Rules
               </button>
               <button
-                onClick={() => setActiveTab('tips')}
+                onClick={() => {
+                  setActiveTab('tips');
+                  playSound('click');
+                }}
                 className={`px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                   activeTab === 'tips'
                     ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                💡 Goofy Survival Tips
+                Goofy Survival Tips
               </button>
             </div>
           </div>
@@ -338,7 +368,7 @@ export const Home: React.FC = () => {
               <div className="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-start gap-3">
                 <Lightbulb size={18} className="text-amber-400 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <span className="font-bold text-white block mb-0.5">Nod and Agree Aggressively 🤔</span>
+                  <span className="font-bold text-white block mb-0.5">Nod and Agree Aggressively</span>
                   If you are the imposter, pretend like the previous clue was the most genius thing you've ever heard.
                 </div>
               </div>
@@ -346,7 +376,7 @@ export const Home: React.FC = () => {
               <div className="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-start gap-3">
                 <Lightbulb size={18} className="text-violet-400 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <span className="font-bold text-white block mb-0.5">Use Multi-Layered Clues 🧠</span>
+                  <span className="font-bold text-white block mb-0.5">Use Multi-Layered Clues</span>
                   Instead of "Yellow" for Banana, say "Minion". Imposters will be utterly confused!
                 </div>
               </div>
@@ -354,7 +384,7 @@ export const Home: React.FC = () => {
               <div className="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-start gap-3">
                 <Lightbulb size={18} className="text-rose-400 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <span className="font-bold text-white block mb-0.5">Blame the Loudest Player 📢</span>
+                  <span className="font-bold text-white block mb-0.5">Blame the Loudest Player</span>
                   Classic social deduction tactic: point fingers at whoever is accusing people first.
                 </div>
               </div>
@@ -362,7 +392,7 @@ export const Home: React.FC = () => {
               <div className="p-3.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-start gap-3">
                 <Lightbulb size={18} className="text-emerald-400 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <span className="font-bold text-white block mb-0.5">Stay Calm Under Fire 😎</span>
+                  <span className="font-bold text-white block mb-0.5">Stay Calm Under Fire</span>
                   If accused, claim your clue was an inside joke or high-level reference.
                 </div>
               </div>
@@ -377,7 +407,7 @@ export const Home: React.FC = () => {
             <span>No sign-up • Works on Mobile & Desktop</span>
           </div>
           <div className="font-semibold text-slate-600">
-            Word Imposter Party Edition ✨
+            Word Imposter Party Edition
           </div>
         </div>
 

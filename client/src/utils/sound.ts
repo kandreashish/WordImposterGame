@@ -40,7 +40,7 @@ export const vibrateMobile = (pattern: number | number[]) => {
 };
 
 // Sound Effect Player using Web Audio API (Zero external assets required)
-export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' | 'vote' | 'playerJoin' | 'playerLeave') => {
+export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' | 'vote' | 'playerJoin' | 'playerLeave' | 'suspense') => {
   if (!isSoundEnabled()) return;
 
   const ctx = getAudioContext();
@@ -49,6 +49,37 @@ export const playSound = (type: 'gameStart' | 'yourTurn' | 'gameEnd' | 'click' |
   const now = ctx.currentTime;
 
   switch (type) {
+    case 'suspense': {
+      // Eerie, suspenseful minor-second drone (e.g. Eb3 + E3)
+      const freqs = [155.56, 164.81];
+      freqs.forEach((freq) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now);
+        osc.detune.setValueAtTime(Math.random() * 8 - 4, now);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.22, now + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 2.9);
+      });
+      const oscHigh = ctx.createOscillator();
+      const gainHigh = ctx.createGain();
+      oscHigh.type = 'sine';
+      oscHigh.frequency.setValueAtTime(880, now + 0.3);
+      oscHigh.frequency.exponentialRampToValueAtTime(440, now + 1.2);
+      gainHigh.gain.setValueAtTime(0, now + 0.3);
+      gainHigh.gain.linearRampToValueAtTime(0.08, now + 0.5);
+      gainHigh.gain.exponentialRampToValueAtTime(0.001, now + 1.3);
+      oscHigh.connect(gainHigh);
+      gainHigh.connect(ctx.destination);
+      oscHigh.start(now + 0.3);
+      oscHigh.stop(now + 1.4);
+      break;
+    }
     case 'gameStart': {
       // Upward fanfare chords (C4, E4, G4, C5)
       const freqs = [261.63, 329.63, 392.00, 523.25];

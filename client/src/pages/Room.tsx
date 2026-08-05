@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useSocket } from '../contexts/SocketContext.js';
 import { LobbyPanel } from '../components/Game/LobbyPanel.js';
@@ -11,8 +11,10 @@ import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
 import { Modal } from '../components/Common/Modal.js';
-import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon, RotateCcw } from 'lucide-react';
+import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon, RotateCcw, Vote, Sparkles, MessageSquareText, Trophy, UserCheck } from 'lucide-react';
 import { ErrorDialog } from '../components/Common/ErrorDialog.js';
+import { playSound } from '../utils/sound.js';
+import { AvatarDisplay } from '../components/Common/AvatarKit.js';
 
 export const Room: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -30,12 +32,16 @@ export const Room: React.FC = () => {
     serverError,
     clearServerError,
     theme,
-    toggleTheme
+    toggleTheme,
+    reactions,
+    sendEmojiReaction
   } = useSocket();
 
   const [nickname, setNickname] = useState(() => localStorage.getItem('wi_nickname') || '');
   const [nicknameError, setNicknameError] = useState('');
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
+  const [splash, setSplash] = useState<{ show: boolean; title: string; subtitle: string; type: string } | null>(null);
+  const prevStatusRef = useRef<string | null>(null);
 
   // Auto join if they refreshed and local credentials match
   useEffect(() => {
@@ -44,6 +50,50 @@ export const Room: React.FC = () => {
       navigate(`/room/${room.code}`);
     }
   }, [room, roomId, navigate]);
+
+  // Flash splash card on phase transitions
+  useEffect(() => {
+    if (!room) return;
+    const prevStatus = prevStatusRef.current;
+    const currentStatus = room.status;
+
+    if (prevStatus && prevStatus !== currentStatus) {
+      let title = '';
+      let subtitle = '';
+      let type = 'default';
+
+      if (currentStatus === 'DISCUSSION') {
+        title = "Clue Discussion";
+        subtitle = "Present your clues verbally or type them. Try not to sound suspicious!";
+        type = 'discussion';
+      } else if (currentStatus === 'VOTING') {
+        title = "IT'S VOTING TIME!";
+        subtitle = "Identify the Imposter! Cast your vote now.";
+        type = 'voting';
+      } else if (currentStatus === 'VOTE_RESOLVED') {
+        title = "Voting Ended";
+        subtitle = "Let's see who the group voted to eliminate...";
+        type = 'resolved';
+      } else if (currentStatus === 'RESULTS') {
+        title = "Final Results";
+        subtitle = "Did the Imposter survive, or did the civilian team win?";
+        type = 'results';
+      } else if (currentStatus === 'REVEAL') {
+        title = "Secret Word Assigned";
+        subtitle = "Check your secret pocket at the bottom of the screen!";
+        type = 'reveal';
+      }
+
+      if (title) {
+        setSplash({ show: true, title, subtitle, type });
+        const timer = setTimeout(() => {
+          setSplash(null);
+        }, 2200);
+        return () => clearTimeout(timer);
+      }
+    }
+    prevStatusRef.current = currentStatus;
+  }, [room?.status]);
 
   const handleJoinDirect = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,11 +119,11 @@ export const Room: React.FC = () => {
               <div className="w-16 h-16 rounded-full border-4 border-violet-500 border-t-transparent animate-spin" />
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-lg font-black text-white uppercase tracking-wider">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-wider">
                 Connecting to Room...
               </h3>
-              <p className="text-xs font-medium text-slate-400">
-                Entering room <span className="text-violet-400 font-bold">{roomId}</span>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Entering room <span className="text-violet-500 dark:text-violet-400 font-bold">{roomId}</span>
               </p>
             </div>
           </div>
@@ -86,8 +136,11 @@ export const Room: React.FC = () => {
         {/* Theme Toggle Button */}
         <div className="absolute top-4 right-4 z-20">
           <button
-            onClick={toggleTheme}
-            className="p-2.5 bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition-all cursor-pointer shadow-lg"
+            onClick={() => {
+              toggleTheme();
+              playSound('click');
+            }}
+            className="p-2.5 bg-white/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer shadow-md"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
           >
             {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
@@ -98,17 +151,17 @@ export const Room: React.FC = () => {
         <div className="absolute bottom-1/4 right-1/4 w-82 h-82 bg-indigo-600/5 rounded-full blur-3xl" />
 
         <div className="w-full max-w-md relative z-10">
-          <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
+          <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Go to Home
           </Link>
 
           <Card>
-            <h2 className="text-2xl font-black text-white uppercase tracking-wider mb-2">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-wider mb-2">
               Join Room
             </h2>
-            <p className="text-xs text-slate-400 font-medium mb-6">
-              You've been invited to room <span className="text-violet-400 font-bold">{roomId}</span>. Enter a nickname to join!
+            <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mb-6">
+              You've been invited to room <span className="text-violet-600 dark:text-violet-400 font-bold">{roomId}</span>. Enter a nickname to join!
             </p>
 
             <form onSubmit={handleJoinDirect} className="flex flex-col gap-4">
@@ -175,7 +228,7 @@ export const Room: React.FC = () => {
   return (
     <div className="min-h-screen game-bg-radial flex flex-col p-4 relative overflow-x-hidden overflow-y-auto">
       {/* Sticky Room Header */}
-      <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-4 mb-4 border-b border-slate-800/80 relative z-10">
+      <header className="w-full max-w-md mx-auto flex items-center justify-between pb-4 mb-4 border-b border-slate-800/80 relative z-10">
         <Link to="/" className="flex items-center gap-1.5 cursor-pointer">
           <span className="text-sm font-black text-white uppercase tracking-wider">
             Word <span className="text-violet-400">Imposter</span>
@@ -206,7 +259,7 @@ export const Room: React.FC = () => {
       </header>
 
       {/* Main Game Screen */}
-      <main className="flex-1 w-full max-w-4xl mx-auto flex flex-col justify-start py-2 pb-8 relative z-10">
+      <main className="flex-1 w-full max-w-md mx-auto flex flex-col justify-start py-2 pb-8 relative z-10">
         {room.status === 'LOBBY' && <LobbyPanel />}
         {room.status === 'REVEAL' && <RevealPanel />}
         {room.status === 'DISCUSSION' && <DiscussionPanel />}
@@ -227,7 +280,92 @@ export const Room: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Phase Transition Splash Overlay */}
+        {splash?.show && (
+          <div className="absolute inset-0 z-50 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center animate-fade-in backdrop-blur-md rounded-2xl border border-slate-800">
+            <div className="flex flex-col items-center gap-5 animate-scale-up max-w-xs">
+              <div className={`p-5 rounded-3xl ${
+                splash.type === 'voting'
+                  ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-lg shadow-rose-500/10'
+                  : splash.type === 'discussion'
+                  ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20 shadow-lg shadow-violet-500/10'
+                  : splash.type === 'reveal'
+                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg shadow-amber-500/10'
+                  : splash.type === 'results'
+                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-lg shadow-emerald-500/10'
+                  : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-lg shadow-indigo-500/10'
+              }`}>
+                {splash.type === 'voting' && <Vote size={48} className="animate-bounce" />}
+                {splash.type === 'discussion' && <MessageSquareText size={48} className="animate-pulse" />}
+                {splash.type === 'reveal' && <Sparkles size={48} className="animate-pulse" />}
+                {splash.type === 'resolved' && <UserCheck size={48} className="animate-bounce" />}
+                {splash.type === 'results' && <Trophy size={48} className="animate-bounce" />}
+              </div>
+              <div className="flex flex-col gap-2">
+                <h1 className={`text-2xl font-black uppercase tracking-wider ${
+                  splash.type === 'voting'
+                    ? 'text-rose-500'
+                    : splash.type === 'discussion'
+                    ? 'text-violet-400'
+                    : splash.type === 'reveal'
+                    ? 'text-amber-400'
+                    : splash.type === 'results'
+                    ? 'text-emerald-400'
+                    : 'text-white'
+                }`}>
+                  {splash.title}
+                </h1>
+                <p className="text-xs font-bold text-slate-400 leading-relaxed">
+                  {splash.subtitle}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
+
+      {/* Real-time Floating Reactions Overlay */}
+      {room && (
+        <div className="absolute inset-x-0 bottom-24 top-0 pointer-events-none overflow-hidden z-40 max-w-md mx-auto">
+          {reactions.map((r, idx) => {
+            const charCodeSum = r.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const leftOffset = 15 + (charCodeSum % 70);
+            return (
+              <div
+                key={r.id}
+                className="absolute bottom-4 pointer-events-none flex flex-col items-center animate-float-emoji"
+                style={{
+                  left: `${leftOffset}%`,
+                  animationDelay: `${(idx * 0.05) % 0.2}s`,
+                }}
+              >
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-700/60 bg-slate-950/90 shadow-md flex items-center justify-center p-0.5">
+                  <AvatarDisplay avatarId={r.emoji} size={36} />
+                </div>
+                <span className="text-[8px] bg-slate-950/85 text-slate-300 border border-slate-800/80 px-2 py-0.5 rounded-lg font-bold uppercase tracking-wider whitespace-nowrap mt-1 shadow-md">
+                  {r.nickname}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Sticky Avatar Reaction Bar */}
+      {room && (
+        <div className="w-full max-w-md mx-auto mt-2 pt-3 border-t border-slate-800/40 flex justify-center gap-3 relative z-30 pb-2">
+          {['ghost', 'panda', 'unicorn', 'frog', 'shark', 'ninja'].map((avId) => (
+            <button
+              key={avId}
+              onClick={() => sendEmojiReaction(avId)}
+              className="w-10 h-10 rounded-xl bg-slate-900/60 border border-slate-850 hover:bg-slate-850/50 hover:border-slate-700 flex items-center justify-center hover:scale-115 active:scale-90 active:bg-violet-600/20 active:border-violet-500 transition-all cursor-pointer shadow-md duration-150 p-1"
+            >
+              <AvatarDisplay avatarId={avId} size={32} />
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Host New Game Confirmation Dialog */}
       <Modal

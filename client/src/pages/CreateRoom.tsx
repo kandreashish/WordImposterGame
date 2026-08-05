@@ -18,6 +18,7 @@ const formatSeconds = (seconds: number): string => {
 };
 
 import { trackEvent } from '../utils/analytics.js';
+import { playSound } from '../utils/sound.js';
 
 export const CreateRoom: React.FC = () => {
   const navigate = useNavigate();
@@ -143,8 +144,11 @@ export const CreateRoom: React.FC = () => {
       {/* Theme Toggle Button */}
       <div className="absolute top-4 right-4 z-20">
         <button
-          onClick={toggleTheme}
-          className="p-2.5 bg-slate-900/60 border border-slate-800 text-slate-400 hover:text-slate-200 rounded-xl hover:bg-slate-800 transition-all cursor-pointer shadow-lg"
+          onClick={() => {
+            toggleTheme();
+            playSound('click');
+          }}
+          className="p-2.5 bg-white/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer shadow-md"
           title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
           {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
@@ -155,13 +159,13 @@ export const CreateRoom: React.FC = () => {
       <div className="absolute bottom-1/4 right-1/4 w-82 h-82 bg-indigo-600/5 rounded-full blur-3xl" />
 
       <div className="w-full max-w-md relative z-10">
-        <Link to="/" onClick={() => trackEvent('click_back_to_home_nav', { screen: 'CreateRoom' })} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
+        <Link to="/" onClick={() => trackEvent('click_back_to_home_nav', { screen: 'CreateRoom' })} className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors uppercase tracking-wider mb-4 group">
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
           Back to Home
         </Link>
 
         <Card>
-          <h2 className="text-2xl font-black text-white uppercase tracking-wider mb-6">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-wider mb-6">
             Create a New Room
           </h2>
 

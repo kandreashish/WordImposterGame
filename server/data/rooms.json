@@ -1,1 +1,188 @@
-[]
+{
+  "totalGamesPlayed": 2,
+  "rooms": [
+    {
+      "code": "3714",
+      "settings": {
+        "gameMode": "classic",
+        "discussionTime": 30,
+        "revealTime": 10,
+        "votingTime": 30,
+        "maxPlayers": 8,
+        "imposterCount": 1,
+        "categories": [
+          "Animals",
+          "Food",
+          "Nature",
+          "Objects",
+          "Sports",
+          "Movies & TV",
+          "Music",
+          "Science",
+          "Places",
+          "Professions"
+        ]
+      },
+      "players": [
+        {
+          "id": "p_b136urg9k",
+          "nickname": "Ashish",
+          "isHost": true,
+          "isReady": false,
+          "isImposter": false,
+          "word": null,
+          "role": "MAJORITY",
+          "isAlive": true,
+          "score": 100,
+          "voteTargetId": null,
+          "isConnected": false,
+          "socketId": null,
+          "avatar": "vampire"
+        }
+      ],
+      "status": "LOBBY",
+      "majorityWord": "",
+      "imposterWord": null,
+      "timer": 0,
+      "roundResults": null,
+      "roundCount": 1,
+      "chat": [
+        {
+          "playerId": "p_888remkls",
+          "nickname": "Jhon",
+          "text": "hi",
+          "timestamp": 1785923758138,
+          "roundNumber": 1
+        }
+      ],
+      "activePlayerId": "p_888remkls",
+      "turnOrder": [
+        "p_b136urg9k",
+        "p_e3xf3krhb",
+        "p_888remkls"
+      ],
+      "currentTurnIndex": 3,
+      "turnTimer": 0,
+      "imposterHint": "Wild",
+      "votedPlayerId": "p_e3xf3krhb",
+      "usedWords": [
+        "Chicken"
+      ]
+    },
+    {
+      "code": "9658",
+      "settings": {
+        "gameMode": "classic",
+        "discussionTime": 30,
+        "revealTime": 10,
+        "votingTime": 30,
+        "maxPlayers": 8,
+        "imposterCount": 1,
+        "categories": [
+          "Animals",
+          "Food",
+          "Nature",
+          "Objects",
+          "Sports",
+          "Movies & TV",
+          "Music",
+          "Science",
+          "Places",
+          "Professions"
+        ]
+      },
+      "players": [
+        {
+          "id": "p_b136urg9k",
+          "nickname": "Ashish",
+          "isHost": true,
+          "isReady": false,
+          "isImposter": true,
+          "word": null,
+          "role": "IMPOSTER",
+          "isAlive": true,
+          "score": 100,
+          "voteTargetId": null,
+          "voteReason": null,
+          "isConnected": false,
+          "socketId": null,
+          "avatar": "frog"
+        },
+        {
+          "id": "p_e3xf3krhb",
+          "nickname": "Ashi",
+          "isHost": false,
+          "isReady": false,
+          "isImposter": false,
+          "word": "Station",
+          "role": "MAJORITY",
+          "isAlive": true,
+          "score": 0,
+          "voteTargetId": null,
+          "voteReason": null,
+          "isConnected": false,
+          "socketId": null,
+          "avatar": "alien"
+        },
+        {
+          "id": "p_888remkls",
+          "nickname": "Jhon",
+          "isHost": false,
+          "isReady": false,
+          "isImposter": false,
+          "word": "Station",
+          "role": "MAJORITY",
+          "isAlive": true,
+          "score": 0,
+          "voteTargetId": null,
+          "voteReason": null,
+          "isConnected": false,
+          "socketId": null,
+          "avatar": "wizard"
+        }
+      ],
+      "status": "RESULTS",
+      "majorityWord": "Station",
+      "imposterWord": null,
+      "timer": 0,
+      "roundResults": {
+        "winnerRole": "IMPOSTER",
+        "imposterWord": null,
+        "majorityWord": "Station",
+        "imposterNicknames": [
+          "Ashish"
+        ],
+        "majorityNicknames": [
+          "Ashi",
+          "Jhon"
+        ],
+        "eliminatedPlayerNickname": null,
+        "wasImposterVotedOut": false
+      },
+      "roundCount": 1,
+      "chat": [],
+      "activePlayerId": "p_b136urg9k",
+      "turnOrder": [
+        "p_888remkls",
+        "p_e3xf3krhb",
+        "p_b136urg9k"
+      ],
+      "currentTurnIndex": 3,
+      "turnTimer": 0,
+      "imposterHint": "Explore",
+      "votedPlayerId": null,
+      "usedWords": [
+        "Station"
+      ]
+    }
+  ],
+  "hostPlayedWords": {
+    "p_b136urg9k": {
+      "words": [
+        "Chicken",
+        "Station"
+      ],
+      "lastPlayedTimestamp": 1785926036372
+    }
+  }
+}

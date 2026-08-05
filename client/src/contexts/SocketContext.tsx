@@ -25,7 +25,9 @@ interface SocketContextType {
   joinRoom: (nickname: string, roomCode: string) => void;
   toggleReady: (isReady: boolean) => void;
   startGame: () => void;
-  submitVote: (targetPlayerId: string) => void;
+  submitVote: (targetPlayerId: string, reason?: string) => void;
+  reactions: Array<{ id: string; emoji: string; nickname: string }>;
+  sendEmojiReaction: (emoji: string) => void;
   kickPlayer: (targetPlayerId: string) => void;
   nextRound: () => void;
   leaveRoom: () => void;
@@ -62,6 +64,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [error, setError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<ServerError | null>(null);
   const clearServerError = () => setServerError(null);
+  const [reactions, setReactions] = useState<Array<{ id: string; emoji: string; nickname: string }>>([]);
   
   // Theme Management
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -130,6 +133,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           if (prevRoom.status === 'LOBBY' && updatedRoom.status !== 'LOBBY') {
             playSound('gameStart');
             vibrateMobile([150, 100, 250]); // Distinct double-pulse for game start
+          }
+
+          // 1.5 Voting Stage Sus Tone
+          if (prevRoom.status !== 'VOTING' && updatedRoom.status === 'VOTING') {
+            playSound('suspense');
+            vibrateMobile([100, 150, 100, 150, 400]); // Suspenseful pulsing vibration
           }
 
           // 2. Game Ended Trigger
@@ -217,6 +226,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       trackEvent('room_closed_by_server', { screen: 'Room', reason });
     });
 
+    socketIo.on('emoji-reaction', ({ nickname: senderNickname, emoji }: { playerId: string; nickname: string; emoji: string }) => {
+      const id = Math.random().toString(36).substr(2, 9);
+      setReactions(prev => [...prev, { id, emoji, nickname: senderNickname }]);
+      setTimeout(() => {
+        setReactions(prev => prev.filter(r => r.id !== id));
+      }, 2500);
+    });
+
     return () => {
       socketIo.disconnect();
     };
@@ -259,12 +276,18 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     socket.emit('start-game');
   };
 
-  const submitVote = (targetPlayerId: string) => {
+  const submitVote = (targetPlayerId: string, reason?: string) => {
     if (!socket) return;
     playSound('vote');
     vibrateMobile(40);
-    trackEvent('click_submit_vote', { screen: 'Voting', targetId: targetPlayerId });
-    socket.emit('submit-vote', { targetPlayerId });
+    trackEvent('click_submit_vote', { screen: 'Voting', targetId: targetPlayerId, reason });
+    socket.emit('submit-vote', { targetPlayerId, reason });
+  };
+
+  const sendEmojiReaction = (emoji: string) => {
+    if (!socket) return;
+    trackEvent('click_emoji_reaction', { screen: room?.status || 'Room', emoji });
+    socket.emit('emoji-reaction', { emoji });
   };
 
   const kickPlayer = (targetPlayerId: string) => {
@@ -343,6 +366,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         toggleReady,
         startGame,
         submitVote,
+        reactions,
+        sendEmojiReaction,
         kickPlayer,
         nextRound,
         leaveRoom,
