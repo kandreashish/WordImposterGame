@@ -441,8 +441,8 @@ export class RoomStore {
     const host = room.players.find(p => p.id === hostPlayerId);
     if (!host || !host.isHost) throw new Error('Only the host can start the game');
 
-    // Filter connected players
-    const activePlayers = room.players.filter(p => p.isConnected);
+    // Include all players in the room, even if temporarily offline
+    const activePlayers = room.players;
     if (activePlayers.length < 3) {
       throw new Error('At least 3 players are required to start the game');
     }
@@ -600,8 +600,8 @@ export class RoomStore {
     if (!room) return;
 
     if (room.status === 'REVEAL') {
-      // Initialize turn order for discussion phase
-      const activePlayers = room.players.filter(p => p.isConnected && p.isAlive);
+      // Initialize turn order for discussion phase (include all alive players, even if temporarily offline)
+      const activePlayers = room.players.filter(p => p.isAlive);
       room.turnOrder = activePlayers.map(p => p.id).sort(() => Math.random() - 0.5);
       room.currentTurnIndex = 0;
       room.activePlayerId = room.turnOrder[0] || null;
@@ -750,8 +750,8 @@ export class RoomStore {
     });
     room.votedPlayerId = null;
 
-    // Initialize description turn order again
-    const activePlayers = room.players.filter(p => p.isConnected && p.isAlive);
+    // Initialize description turn order again (include all alive players, even if temporarily offline)
+    const activePlayers = room.players.filter(p => p.isAlive);
     room.turnOrder = activePlayers.map(p => p.id).sort(() => Math.random() - 0.5);
     room.currentTurnIndex = 0;
     room.activePlayerId = room.turnOrder[0] || null;

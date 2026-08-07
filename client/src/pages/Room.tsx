@@ -11,7 +11,7 @@ import { Card } from '../components/Common/Card.js';
 import { Input } from '../components/Common/Input.js';
 import { Button } from '../components/Common/Button.js';
 import { Modal } from '../components/Common/Modal.js';
-import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon, RotateCcw, Vote, Sparkles, MessageSquareText, Trophy, UserCheck } from 'lucide-react';
+import { Wifi, WifiOff, AlertTriangle, ArrowLeft, Sun, Moon, RotateCcw, Vote, Sparkles, MessageSquareText, Trophy, UserCheck, LogOut } from 'lucide-react';
 import { ErrorDialog } from '../components/Common/ErrorDialog.js';
 import { playSound } from '../utils/sound.js';
 import { AvatarDisplay } from '../components/Common/AvatarKit.js';
@@ -237,6 +237,21 @@ export const Room: React.FC = () => {
 
         {/* Theme & Connection indicators */}
         <div className="flex items-center gap-3">
+          {room && (
+            <button
+              onClick={() => {
+                if (window.confirm("Are you sure you want to leave the room?")) {
+                  playSound('click');
+                  leaveRoom();
+                  navigate('/');
+                }
+              }}
+              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
+              title="Leave Room"
+            >
+              <LogOut size={16} />
+            </button>
+          )}
           <button
             onClick={toggleTheme}
             className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 rounded-xl transition-all cursor-pointer"

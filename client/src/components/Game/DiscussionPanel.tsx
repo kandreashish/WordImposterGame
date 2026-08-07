@@ -44,6 +44,53 @@ export const DiscussionPanel: React.FC = () => {
         <Timer value={room.timer} total={room.settings.discussionTime || 30} />
       </div>
 
+      {/* Active Speaker Controls (Only visible at top if it is YOUR turn to speak) */}
+      {room.activePlayerId === playerId && (
+        <Card className="border-violet-500/50 bg-violet-600/5 py-5 px-4 flex flex-col items-center text-center relative overflow-hidden glow-card">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/10 rounded-full blur-2xl animate-pulse" />
+          
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-400 shadow-md shadow-violet-500/20">
+              <AvatarDisplay avatarId={self.avatar || 'fox'} size={40} />
+            </div>
+            <div className="flex flex-col text-left">
+              <span className="text-3xs font-extrabold text-violet-400 uppercase tracking-widest flex items-center gap-1">
+                <Volume2 size={12} className="animate-pulse" />
+                YOUR TURN
+              </span>
+              <span className="text-xs font-bold text-white">{self.nickname}</span>
+            </div>
+          </div>
+
+          <h3 className="text-base font-bold text-slate-100 mb-4">
+            Provide a clue for your word!
+          </h3>
+          
+          <form onSubmit={handleClueSubmit} className="flex gap-2 w-full max-w-sm mb-3">
+            <input
+              type="text"
+              value={clueText}
+              onChange={(e) => setClueText(e.target.value)}
+              placeholder="Type your clue here... (e.g. Warm)"
+              className="glass-input px-3.5 py-2 rounded-xl text-slate-100 font-medium text-sm focus:outline-none flex-1 bg-slate-950 border border-slate-800"
+              maxLength={30}
+              autoFocus
+            />
+            <Button type="submit" size="sm" className="gap-1.5 flex-shrink-0">
+              <Send size={12} /> Send
+            </Button>
+          </form>
+
+          <span className="text-5xs text-slate-500 font-bold uppercase tracking-wider mb-2">
+            Or explain verbally and pass
+          </span>
+
+          <Button variant="secondary" size="sm" onClick={() => doneSpeaking()} className="w-full max-w-sm">
+            Done Speaking (Pass Turn)
+          </Button>
+        </Card>
+      )}
+
       {/* Imposter Category Hint Section */}
       {self.isImposter && room.imposterHint && (
         <Card className="border-amber-500/20 bg-amber-950/10 p-3.5 flex items-start gap-3 relative overflow-hidden">

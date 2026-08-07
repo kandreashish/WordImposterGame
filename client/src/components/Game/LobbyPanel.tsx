@@ -54,7 +54,8 @@ export const LobbyPanel: React.FC = () => {
   const isHost = self?.isHost || false;
 
   const connectedPlayersCount = room.players.filter(p => p.isConnected).length;
-  const canStartGame = connectedPlayersCount >= 3;
+  const totalPlayersCount = room.players.length;
+  const canStartGame = totalPlayersCount >= 3;
 
   const getJoinUrl = () => {
     const baseUrl = import.meta.env.BASE_URL ? import.meta.env.BASE_URL.replace(/\/$/, '') : '/wordgame';
@@ -361,7 +362,7 @@ export const LobbyPanel: React.FC = () => {
             className="sm:w-2/3 gap-2"
           >
             <Zap size={18} className={canStartGame ? "animate-zap" : "text-slate-400"} />
-            {connectedPlayersCount < 3 ? 'Need 3+ Players' : 'Start Game'}
+            {totalPlayersCount < 3 ? 'Need 3+ Players' : 'Start Game'}
           </Button>
         ) : (
           <Button variant="secondary" size="lg" disabled className="sm:w-2/3 cursor-not-allowed opacity-60">
