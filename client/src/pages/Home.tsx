@@ -19,7 +19,8 @@ import {
   ShieldAlert,
   Flame,
   Lightbulb,
-  Play
+  Play,
+  WifiOff
 } from 'lucide-react';
 import { useSocket } from '../contexts/SocketContext.js';
 import { trackEvent } from '../utils/analytics.js';
@@ -209,7 +210,7 @@ export const Home: React.FC = () => {
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3.5 w-full max-w-md mb-6">
+          <div className="flex flex-col sm:flex-row gap-3.5 w-full max-w-md mb-3">
             <Link to="/create" onClick={handleCreateNav} className="flex-1">
               <Button size="lg" fullWidth className="group text-base font-bold shadow-lg shadow-violet-600/25">
                 <Play size={18} className="mr-2 fill-white group-hover:scale-110 transition-transform" />
@@ -223,6 +224,19 @@ export const Home: React.FC = () => {
               </Button>
             </Link>
           </div>
+
+          <Link to="/offline" className="w-full max-w-md mb-6">
+            <Button
+              variant="secondary"
+              size="md"
+              fullWidth
+              className="text-sm font-semibold border-dashed border-violet-500/35 hover:border-violet-500/60 bg-violet-600/5 hover:bg-violet-600/10"
+              onClick={() => playSound('click')}
+            >
+              <WifiOff size={16} className="mr-2 text-violet-400" />
+              Offline Pass & Play (Local Party)
+            </Button>
+          </Link>
 
           {/* Feature Quick Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-lg pt-4 border-t border-slate-800/80 text-center">

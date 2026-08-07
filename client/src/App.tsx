@@ -4,6 +4,7 @@ import { Home } from './pages/Home.js';
 import { CreateRoom } from './pages/CreateRoom.js';
 import { JoinRoom } from './pages/JoinRoom.js';
 import { Room } from './pages/Room.js';
+import { OfflineRoom } from './pages/OfflineRoom.js';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="/create" element={<CreateRoom />} />
           <Route path="/join" element={<JoinRoom />} />
           <Route path="/room/:roomId" element={<Room />} />
+          <Route path="/offline" element={<OfflineRoom />} />
         </Routes>
       </SocketProvider>
     </Router>
