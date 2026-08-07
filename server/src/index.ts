@@ -80,8 +80,9 @@ io.on('connection', (socket) => {
       socket.join(roomCode);
 
       try {
-        store.joinRoom(roomCode, playerId, nickname, socket.id);
+        const room = store.joinRoom(roomCode, playerId, nickname, socket.id);
         console.log(`Player ${nickname} (${playerId}) joined Room ${roomCode}`);
+        socket.emit('game-state', room);
       } catch (storeError: any) {
         // Leave channel if store rejection occurs (full, duplicate nickname, etc)
         socket.leave(roomCode);
@@ -105,6 +106,7 @@ io.on('connection', (socket) => {
       const room = store.reconnectPlayer(roomCode, playerId, socket.id);
       if (room) {
         console.log(`Player ${playerId} reconnected to Room ${roomCode}`);
+        socket.emit('game-state', room);
       } else {
         socket.leave(roomCode);
         socket.data.playerId = undefined;
